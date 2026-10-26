@@ -28,7 +28,7 @@
   --kerahat:#D3362B; --kerahat-soft:#FBE3E1;
   --makruh:#E0821F; --makruh-soft:#FCEBD7;
   --third:#2F45A8; --third-soft:#E1E6F8;
-  --p-fajr:#B7C5E6; --p-duha:#E6EAF0; --p-dhuhr:#A6D8CC; --p-asr:#73B8A8; --p-maghrib:#4A8C89; --p-isha:#2D4E63; --p-night:#C9D1E3;
+  --p-fajr:#B7C5E6; --p-duha:#E6EAF0; --p-dhuhr:#A6D8CC; --p-asr:#73B8A8; --p-maghrib:#4A8C89; --p-isha:#2D4E63; --p-night:#C9D1E3; --p-current:#0E7A72;
   --kz-ok:#1E8A4C; --kz-ok-soft:#D5F0DE; --kz-part:#B07F00; --kz-part-soft:#FBEDBF; --kz-open:#C9372C; --kz-open-soft:#FADDDA;
   --font-display:"Marcellus","Iowan Old Style","Palatino Linotype",Georgia,serif;
   --font-body:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -41,7 +41,7 @@
   --kerahat:#FF5B4F; --kerahat-soft:#3A1A1B;
   --makruh:#F4A04A; --makruh-soft:#3A2814;
   --third:#8395FA; --third-soft:#1E2550;
-  --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772;
+  --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772; --p-current:#5FD6C6;
   --kz-ok:#4CC77E; --kz-ok-soft:#163A25; --kz-part:#E9B93C; --kz-part-soft:#3A3013; --kz-open:#FF6B5F; --kz-open-soft:#3F1C1C;
   color-scheme:dark}}
 :root[data-theme="dark"]{
@@ -50,7 +50,7 @@
   --kerahat:#FF5B4F; --kerahat-soft:#3A1A1B;
   --makruh:#F4A04A; --makruh-soft:#3A2814;
   --third:#8395FA; --third-soft:#1E2550;
-  --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772;
+  --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772; --p-current:#5FD6C6;
   --kz-ok:#4CC77E; --kz-ok-soft:#163A25; --kz-part:#E9B93C; --kz-part-soft:#3A3013; --kz-open:#FF6B5F; --kz-open-soft:#3F1C1C;
   color-scheme:dark}
 
@@ -79,21 +79,31 @@ button{cursor:pointer}
 .today-btn{margin-top:4px;border:0;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:12.5px;padding:3px 10px;border-radius:999px}
 
 /* ring */
-.ringwrap{background:var(--surface);border-radius:var(--r);padding:10px 8px 12px;border:1px solid var(--line)}
-#ring{display:block;width:100%;max-width:400px;height:auto;margin:0 auto}
-#ring .hour{fill:var(--muted);font-size:11px;font-family:var(--font-body);font-variant-numeric:tabular-nums}
-#ring .tick{stroke:var(--muted);stroke-width:1;opacity:.55}
-#ring .tick.major{opacity:.9;stroke-width:1.4}
-#ring .plabel{fill:var(--fg);font-size:10.5px;font-weight:600;font-family:var(--font-body)}
+.ringwrap{background:var(--surface);border-radius:var(--r);padding:6px 2px 12px;border:1px solid var(--line)}
+#ring{display:block;width:100%;max-width:480px;height:auto;margin:0 auto}
+#ring text{font-family:var(--font-body)}
+#ring .tick{stroke:var(--muted);stroke-width:1;opacity:.5}
+#ring .tick.major{opacity:.85;stroke-width:1.4}
 #ring .seg{stroke:var(--surface);stroke-width:1}
+#ring .cur{fill:var(--p-current)}
+#ring .sep{stroke:var(--surface);stroke-width:2.2}
 #ring .ker{fill:var(--kerahat)}
-#ring .hatch-line{stroke:var(--makruh);stroke-width:2.6}
+#ring .mkarc{fill:var(--makruh)}
+#ring .pname{fill:var(--fg);font-size:13px;font-weight:600}
+#ring .ptime{fill:var(--muted);font-size:11.5px;font-variant-numeric:tabular-nums}
+#ring .sun-p{fill:var(--muted);font-weight:500}
+#ring .now-p{fill:var(--p-current);font-weight:700}
+#ring .pname.now-p{font-size:14.5px}
+#ring .ptime.now-p{font-size:13px}
 #ring .nightband{fill:var(--p-night)}
 #ring .third{fill:var(--third)}
 #ring .thirdtick{stroke:var(--fg);stroke-width:1.6}
-#ring .midline{stroke:var(--makruh);stroke-width:2.6;stroke-linecap:round}
-#ring .midlabel{fill:var(--makruh);font-size:10px;font-weight:700}
+#ring .thirdlabel{fill:var(--third);font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums}
+#ring .midline{stroke:var(--makruh);stroke-width:2.4;stroke-linecap:round}
+#ring .midname{fill:var(--muted);font-size:10.5px}
+#ring .midtime{fill:var(--makruh);font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
 #ring .now{stroke:var(--fg);stroke-width:2.4;stroke-linecap:round}
+#ring .nowhalo{stroke:var(--surface);stroke-width:5.5;stroke-linecap:round}
 #ring .nowdot{fill:var(--fg)}
 #ring .nowring{fill:var(--surface);stroke:var(--fg);stroke-width:2}
 #ring .c-small{fill:var(--muted);font-size:12px;font-family:var(--font-body)}
@@ -104,7 +114,7 @@ button{cursor:pointer}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:14px;height:10px;border-radius:3px;display:inline-block}
 .sw.k{background:var(--kerahat)}
-.sw.m{background:repeating-linear-gradient(135deg,var(--makruh) 0 2px,transparent 2px 5px);border:1px solid var(--makruh)}
+.sw.m{background:var(--makruh);height:4px;border-radius:2px}
 .sw.t{background:var(--third)}
 
 /* cards */
@@ -265,7 +275,7 @@ button{cursor:pointer}
   </div>
 
   <div class="ringwrap">
-    <svg id="ring" viewBox="0 0 400 400" role="img" aria-label="24-Stunden-Ring"></svg>
+    <svg id="ring" viewBox="0 0 480 480" role="img" aria-label="24-Stunden-Ring"></svg>
     <div class="legend">
       <span><i class="sw k"></i><em id="lgK" style="font-style:normal"></em></span>
       <span><i class="sw m"></i><em id="lgM" style="font-style:normal"></em></span>
@@ -436,7 +446,7 @@ const T={
   kerSub:["kein Gebet","kein Gebet","kein freiwilliges Gebet, Asr des Tages erlaubt"],
   nightRows:["Islamische Mitternacht","Ende erstes Drittel","Beginn letztes Drittel","Länge der Nacht"],
   nightSubs:["danach Isha makruh","","für Nachtgebete (Teheddschud)","Maghrib bis Fajr"],
-  legK:"Kerahat",legM:"Isha makruh (nach Mitternacht)",legT:"Letztes Drittel",
+  legK:"Kerahat",legM:"Isha makruh (nach Mitternacht)",midnight:"Mitternacht",legT:"Letztes Drittel",
   next:"als Nächstes",untilFmt:(n,t)=>`bis ${n} · ${t}`,now:"Jetzt",today:"Heute",
   stK:"KERAHAT-ZEIT",stM:"NACH MITTERNACHT",stT:"LETZTES DRITTEL",
   gps:"Meinen Standort verwenden",gpsWait:"Standort wird ermittelt …",
@@ -476,7 +486,7 @@ const T={
   kerSub:["namaz kılınmaz","namaz kılınmaz","nafile kılınmaz, günün ikindisi kılınabilir"],
   nightRows:["Şer'î gece yarısı","Birinci üçte birin sonu","Son üçte birin başlangıcı","Gecenin uzunluğu"],
   nightSubs:["sonrasında yatsı mekruh","","gece namazı (teheccüd) için","akşamdan sabaha"],
-  legK:"Kerahat",legM:"Yatsı mekruh (gece yarısından sonra)",legT:"Son üçte bir",
+  legK:"Kerahat",legM:"Yatsı mekruh (gece yarısından sonra)",midnight:"Gece yarısı",legT:"Son üçte bir",
   next:"sıradaki",untilFmt:(n,t)=>`${n} vaktine · ${t}`,now:"Şimdi",today:"Bugün",
   stK:"KERAHAT VAKTİ",stM:"GECE YARISINDAN SONRA",stT:"SON ÜÇTE BİR",
   gps:"Konumumu kullan",gpsWait:"Konum belirleniyor …",
@@ -583,8 +593,9 @@ function derive(day){
 }
 
 /* ---------- ring drawing ---------- */
-const SVGNS="http://www.w3.org/2000/svg", C=200;
-const R={outO:154,outI:122,nO:116,nI:104,lab:91,tickO:166,tickI:159,hour:180};
+const SVGNS="http://www.w3.org/2000/svg", C=240;
+// ring radii: outer prayer ring, current-prayer bulge, night band inside, hour ticks and labels outside
+const R={outO:154,outI:122,bulge:9,nO:110,nI:98,tickI:162,tickO:166,tickMaj:170,lab:178};
 const ang=m=>((m/1440)*360+180)*RAD;                 // 12:00 at the top, 00:00 at the bottom, clockwise
 const pt=(r,m)=>[C+r*Math.sin(ang(m)),C-r*Math.cos(ang(m))];
 function sector(r1,r2,m1,m2){
@@ -594,50 +605,85 @@ function sector(r1,r2,m1,m2){
   return `M${a.toFixed(2)} ${b.toFixed(2)}A${r2} ${r2} 0 ${large} 1 ${c.toFixed(2)} ${d.toFixed(2)}L${e.toFixed(2)} ${f.toFixed(2)}A${r1} ${r1} 0 ${large} 0 ${g.toFixed(2)} ${h.toFixed(2)}Z`;
 }
 function el(tag,attrs,parent,text){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
-let centerRefs=null, nowRefs=null;
+let centerRefs=null, nowRefs=null, ringCur=null;
+
+// prayer period the clock is in (null between Shuruq and Dhuhr)
+function curPrayer(t,m){
+  if(m<t.fajr)return "isha";if(m<t.shuruq)return "fajr";if(m<t.dhuhr)return null;
+  if(m<t.asr)return "dhuhr";if(m<t.maghrib)return "asr";if(m<t.isha)return "maghrib";return "isha";
+}
+function currentKey(){const n=nowMin();return D&&sameDay(n.day,viewDay)?curPrayer(D.t,n.min):null}
+
+// two-line label just outside the ring; anchored by side: right → start, left → end, top/bottom → middle
+function outLabel(parent,m,r,lines){
+  const a=ang(m),sx=Math.sin(a),sy=-Math.cos(a),[x,y]=pt(r,m);
+  const g=el("g",{},parent),side=Math.abs(sx)>0.5,lh=14;
+  const anchor=side?(sx>0?"start":"end"):"middle";
+  const top=side?y-lh/2-1:(sy<0?y-lh*lines.length+8:y+10); // baseline of the first line
+  lines.forEach(([txt,cls],i)=>el("text",{x:x+(side?(sx>0?2:-2):0),y:top+i*lh,"text-anchor":anchor,class:cls},g,txt));
+  return g;
+}
+const boxHit=(a,b)=>a.width&&b.width&&a.x<b.x+b.width&&b.x<a.x+a.width&&a.y<b.y+b.height&&b.y<a.y+a.height;
 
 function drawRing(day,D){
   const s=document.getElementById("ring");s.innerHTML="";
-  const defs=el("defs",{},s);
-  const pat=el("pattern",{id:"hatch",width:"7",height:"7",patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
-  el("line",{x1:"0",y1:"0",x2:"0",y2:"7",class:"hatch-line"},pat);
-  const t=D.t;
-  // periods
-  const per=[[0,t.fajr,"--p-isha"],[t.fajr,t.shuruq,"--p-fajr"],[t.shuruq,t.dhuhr,"--p-duha"],[t.dhuhr,t.asr,"--p-dhuhr"],
-             [t.asr,t.maghrib,"--p-asr"],[t.maghrib,t.isha,"--p-maghrib"],[t.isha,1440,"--p-isha"]];
-  for(const [a,b,v] of per){const d=sector(R.outI,R.outO,a,b);if(d)el("path",{d,class:"seg",style:`fill:var(${v})`},s)}
-  // isha makruh hatch (after islamic midnight until Fajr)
-  for(const n of [D.lastNight,D.tonight]){const d=sector(R.outI,R.outO,n.mid,n.end);if(d)el("path",{d,fill:"url(#hatch)"},s)}
-  // kerahat
-  for(const [a,b] of D.ker){const d=sector(R.outI-3,R.outO+3,a,b);if(d)el("path",{d,class:"ker"},s)}
-  // night band with thirds
+  const t=D.t,cur=currentKey();ringCur=cur;
+  const L=T[lang];
+  // periods (the running one is drawn later, thicker)
+  const per=[[0,t.fajr,"--p-isha","isha"],[t.fajr,t.shuruq,"--p-fajr","fajr"],[t.shuruq,t.dhuhr,"--p-duha",null],[t.dhuhr,t.asr,"--p-dhuhr","dhuhr"],
+             [t.asr,t.maghrib,"--p-asr","asr"],[t.maghrib,t.isha,"--p-maghrib","maghrib"],[t.isha,1440,"--p-isha","isha"]];
+  const curArcs=cur?per.filter(p=>p[3]===cur).map(p=>[p[0],p[1]]):[];
+  for(const [a,b,v,k] of per){if(cur&&k===cur)continue;const d=sector(R.outI,R.outO,a,b);if(d)el("path",{d,class:"seg",style:`fill:var(${v})`},s)}
+  for(const [a,b] of curArcs){const d=sector(R.outI-R.bulge,R.outO+R.bulge,a,b);if(d)el("path",{d,class:"cur"},s)}
+  // kerahat, same width as the normal ring
+  for(const [a,b] of D.ker){const d=sector(R.outI,R.outO,a,b);if(d)el("path",{d,class:"ker"},s)}
+  // separators at each prayer start
+  const inCur=m=>curArcs.some(([a,b])=>m>=a-0.5&&m<=b+0.5);
+  for(const k of KEYS){const m=t[k];if(isNaN(m))continue;const ext=inCur(m)?R.bulge+1:1;
+    const [x1,y1]=pt(R.outI-ext,m),[x2,y2]=pt(R.outO+ext,m);el("line",{x1,y1,x2,y2,class:"sep"},s)}
+  // isha makruh: thin orange arc just outside the ring, islamic midnight → Fajr
+  const curIsha=cur==="isha", mkR=R.outO+(curIsha?R.bulge:0)+2;
+  for(const n of [D.lastNight,D.tonight]){const d=sector(mkR,mkR+3,n.mid,n.end);if(d)el("path",{d,class:"mkarc"},s)}
+  // hour ticks, longer every 6 hours; none inside the running prayer's section
+  for(let h=0;h<24;h++){const m=h*60;if(inCur(m))continue;const major=h%6===0;
+    const [x1,y1]=pt(R.tickI,m),[x2,y2]=pt(major?R.tickMaj:R.tickO,m);el("line",{x1,y1,x2,y2,class:"tick"+(major?" major":"")},s)}
+  // night band: only the start of the last third is marked
+  const marks=[];
   for(const n of [D.lastNight,D.tonight]){
     const d1=sector(R.nI,R.nO,n.start,n.end);if(d1)el("path",{d:d1,class:"nightband"},s);
     const d2=sector(R.nI,R.nO,n.t2,n.end);if(d2)el("path",{d:d2,class:"third"},s);
-    for(const m of [n.t1,n.t2]){if(m>0&&m<1440){const [x1,y1]=pt(R.nI-3,m),[x2,y2]=pt(R.nO+3,m);el("line",{x1,y1,x2,y2,class:"thirdtick"},s)}}
-    if(n.mid>0&&n.mid<1440){
-      const [x1,y1]=pt(R.nI-6,n.mid),[x2,y2]=pt(R.outO+6,n.mid);el("line",{x1,y1,x2,y2,class:"midline"},s);
-      const [lx,ly]=pt(R.nI-15,n.mid);el("text",{x:lx,y:ly+3.5,"text-anchor":"middle",class:"midlabel"},s,fmt(n.mid));
+    if(n.t2>0&&n.t2<1440){const [x1,y1]=pt(R.nI-3,n.t2),[x2,y2]=pt(R.nO+3,n.t2);el("line",{x1,y1,x2,y2,class:"thirdtick"},s);
+      const [lx,ly]=pt(R.nI-14,n.t2);el("text",{x:lx,y:ly+3.5,"text-anchor":"middle",class:"thirdlabel"},s,fmt(n.t2))}
+    if(n.mid>0&&n.mid<1440)marks.push(n.mid);
+  }
+  // prayer names and times outside
+  const labs=[];
+  for(const k of KEYS){const m=t[k];if(isNaN(m))continue;
+    const c=k===cur?" now-p":k==="shuruq"?" sun-p":"";
+    const r=R.lab+(k===cur?R.bulge-4:0);
+    labs.push(outLabel(s,m,r,[[nm(k),"pname"+c],[fmt(m),"ptime"+c]]))}
+  // islamic midnight: line through the ring, label outside (moved further out if it would touch a prayer label)
+  for(const m of marks){
+    const outer=mkR+5,[x1,y1]=pt(R.nI-2,m),[x2,y2]=pt(outer,m);el("line",{x1,y1,x2,y2,class:"midline"},s);
+    let g=null;
+    for(let step=0;step<4;step++){
+      if(g)g.remove();
+      g=outLabel(s,m,R.lab+(curIsha?R.bulge-4:0)+step*14,[[L.midnight,"midname"],[fmt(m),"midtime"]]);
+      let bb;try{bb=g.getBBox()}catch(e){break}
+      if(!labs.some(l=>{try{return boxHit(bb,l.getBBox())}catch(e){return false}}))break;
     }
   }
-  // hour ticks + labels
-  for(let h=0;h<24;h++){const m=h*60,major=h%3===0;const [x1,y1]=pt(R.tickI+(major?-3:0),m),[x2,y2]=pt(R.tickO,m);
-    el("line",{x1,y1,x2,y2,class:"tick"+(major?" major":"")},s);
-    if(major){const [x,y]=pt(R.hour,m);el("text",{x,y:y+4,"text-anchor":"middle",class:"hour"},s,String(h).padStart(2,"0"))}}
-  // prayer labels inside the ring
-  const short={fajr:nm("fajr"),dhuhr:nm("dhuhr"),asr:nm("asr"),maghrib:nm("maghrib"),isha:nm("isha")};
-  for(const k in short){const a=t[k],b={fajr:t.shuruq,dhuhr:t.asr,asr:t.maghrib,maghrib:t.isha,isha:Math.min(D.tonight.mid,1440)}[k];
-    const m=(a+b)/2;const [x,y]=pt(R.lab,m);el("text",{x,y:y+3.5,"text-anchor":"middle",class:"plabel"},s,short[k])}
-  // now pointer (only for today)
+  // now pointer (only for today): short stroke across the ring with a small circle outside
   const g=el("g",{id:"nowG"},s);
-  const ln=el("line",{class:"now"},g), dot=el("circle",{r:"5.5",class:"nowring"},g);
-  nowRefs={g,ln,dot};
+  const halo=el("line",{class:"nowhalo"},g), ln=el("line",{class:"now"},g), dot=el("circle",{r:"5",class:"nowring"},g);
+  nowRefs={g,halo,ln,dot};
   // center
   const cs=el("text",{x:C,y:C-34,"text-anchor":"middle",class:"c-small"},s);
   const cn=el("text",{x:C,y:C-8,"text-anchor":"middle",class:"c-name"},s);
   const cc=el("text",{x:C,y:C+24,"text-anchor":"middle",class:"c-count"},s);
   const st=el("text",{x:C,y:C+46,"text-anchor":"middle",class:"c-state"},s);
-  centerRefs={cs,cn,cc,st};
+  const st2=el("text",{x:C,y:C+61,"text-anchor":"middle",class:"c-state"},s);
+  centerRefs={cs,cn,cc,st,st2};
 }
 
 /* ---------- lists ---------- */
@@ -768,9 +814,10 @@ function showList(on){showView(on?"list":"main")}
 function tick(){
   if(!D)return;
   const L=T[lang];const n=nowMin();
+  if(currentKey()!==ringCur)drawRing(viewDay,D);
   if(!sameDay(n.day,viewDay)){
     // other day in view: no pointer, center shows the day's Fajr–Isha span
-    nowRefs.g.setAttribute("visibility","hidden");
+    nowRefs.g.setAttribute("visibility","hidden");centerRefs.st2.textContent="";
     centerRefs.cs.textContent=nm("fajr")+" – "+nm("isha");centerRefs.cn.textContent=fmt(D.t.fajr)+" – "+fmt(D.t.isha);
     centerRefs.cn.setAttribute("style","font-size:17px");centerRefs.cc.textContent="";centerRefs.st.textContent="";
     for(const r of document.querySelectorAll(".row"))r.classList.remove("cur","next","active","activem");
@@ -779,16 +826,15 @@ function tick(){
   // after local midnight the view rolls to the new day on its own
   const t=D.t,m=n.min;
   nowRefs.g.setAttribute("visibility","visible");
-  const [x1,y1]=pt(R.nI-8,m),[x2,y2]=pt(R.outO+4,m),[dx,dy]=pt(R.outO+9,m);
-  nowRefs.ln.setAttribute("x1",x1);nowRefs.ln.setAttribute("y1",y1);nowRefs.ln.setAttribute("x2",x2);nowRefs.ln.setAttribute("y2",y2);
+  const bg=ringCur?R.bulge:0,[x1,y1]=pt(R.outI-bg-1,m),[x2,y2]=pt(R.outO+bg+5,m),[dx,dy]=pt(R.outO+bg+10,m);
+  for(const l of [nowRefs.halo,nowRefs.ln]){l.setAttribute("x1",x1);l.setAttribute("y1",y1);l.setAttribute("x2",x2);l.setAttribute("y2",y2)}
   nowRefs.dot.setAttribute("cx",dx);nowRefs.dot.setAttribute("cy",dy);
   // next event
   const ev=KEYS.map(k=>[k,t[k]]).filter(([,v])=>v>m);
   let nextK,nextM;
   if(ev.length){[nextK,nextM]=ev[0]}else{nextK="fajr";nextM=D.tn.fajr+1440}
   // current prayer period
-  let cur=null;
-  if(m<t.fajr)cur="isha";else if(m<t.shuruq)cur="fajr";else if(m<t.dhuhr)cur=null;else if(m<t.asr)cur="dhuhr";else if(m<t.maghrib)cur="asr";else if(m<t.isha)cur="maghrib";else cur="isha";
+  const cur=curPrayer(t,m);
   for(const r of document.querySelectorAll("#prayerRows .row")){r.classList.toggle("cur",r.dataset.k===cur);r.classList.toggle("next",r.dataset.k===nextK)}
   const secs=Math.max(0,Math.round((nextM-m)*60));
   const hh=Math.floor(secs/3600),mm=Math.floor(secs%3600/60),ss=secs%60;
@@ -800,8 +846,10 @@ function tick(){
   const nights=[D.lastNight,D.tonight];
   const afterMid=nights.some(x=>m>=x.mid&&m<x.end), inLast=nights.some(x=>m>=x.t2&&m<x.end);
   let state="",col="";
-  if(inK>=0){state=L.stK;col="var(--kerahat)"}else if(inLast){state=L.stT+(afterMid?" · "+L.stM:"");col="var(--third)"}else if(afterMid){state=L.stM;col="var(--makruh)"}
+  let state2="";
+  if(inK>=0){state=L.stK;col="var(--kerahat)"}else if(inLast){state=L.stT;state2=afterMid?L.stM:"";col="var(--third)"}else if(afterMid){state=L.stM;col="var(--makruh)"}
   centerRefs.st.textContent=state;centerRefs.st.setAttribute("style",`fill:${col||"var(--muted)"}`);
+  centerRefs.st2.textContent=state2;centerRefs.st2.setAttribute("style","fill:var(--makruh)");
   document.querySelectorAll("#kerRows .row").forEach((r,i)=>r.classList.toggle("active",i===inK));
   const nr=document.querySelectorAll("#nightRows .row");
   nr.forEach(r=>{r.classList.remove("active","activem");if(r.dataset.kind==="th"&&inLast)r.classList.add("active");if(r.dataset.kind==="mid"&&afterMid)r.classList.add("activem")});
