@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Vakit">
+<meta name="theme-color" content="#EDF0F5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C111D" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>:root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<script>window.VAKIT_STANDALONE=true;</script>
+<title>Vakit Ring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Figtree:wght@400;500;600;700&family=Marcellus&display=swap">
+</head>
+<body>
+<style>
+/* Layout: one narrow column like a phone app. Ring first, then the day's times, then kerahat, night, place and settings. */
+:root{
+  --bg:#EDF0F5; --surface:#FFFFFF; --surface-2:#F5F7FA; --fg:#172033; --muted:#5D6880; --line:#D7DDE7;
+  --accent:#12706B; --accent-soft:#DCEFEC;
+  --kerahat:#D3362B; --kerahat-soft:#FBE3E1;
+  --makruh:#E0821F; --makruh-soft:#FCEBD7;
+  --third:#2F45A8; --third-soft:#E1E6F8;
+  --p-fajr:#B7C5E6; --p-duha:#E6EAF0; --p-dhuhr:#A6D8CC; --p-asr:#73B8A8; --p-maghrib:#4A8C89; --p-isha:#2D4E63; --p-night:#C9D1E3;
+  --font-display:"Marcellus","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --font-body:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font-ar:"Amiri","Geeza Pro","Times New Roman",serif;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C111D; --surface:#151C2C; --surface-2:#1B2336; --fg:#E7EBF3; --muted:#97A2B9; --line:#28324A;
+  --accent:#4FC2B3; --accent-soft:#16312F;
+  --kerahat:#FF5B4F; --kerahat-soft:#3A1A1B;
+  --makruh:#F4A04A; --makruh-soft:#3A2814;
+  --third:#8395FA; --third-soft:#1E2550;
+  --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C111D; --surface:#151C2C; --surface-2:#1B2336; --fg:#E7EBF3; --muted:#97A2B9; --line:#28324A;
+  --accent:#4FC2B3; --accent-soft:#16312F;
+  --kerahat:#FF5B4F; --kerahat-soft:#3A1A1B;
+  --makruh:#F4A04A; --makruh-soft:#3A2814;
+  --third:#8395FA; --third-soft:#1E2550;
+  --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772;
+  color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+.app{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;display:flex;flex-direction:column;gap:14px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.place{display:flex;align-items:center;gap:8px;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 12px 7px 10px}
+.place svg{flex:none;color:var(--accent)}
+.place span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;font-size:14px}
+.lang{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;flex:none}
+.lang button{border:0;background:transparent;padding:5px 11px;border-radius:999px;font-weight:600;font-size:13px;color:var(--muted)}
+.lang button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+
+/* date */
+.date{display:flex;align-items:center;gap:8px}
+.date .nav{flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.date .mid{flex:1;min-width:0;text-align:center}
+.date h1{font-family:var(--font-display);font-weight:400;font-size:22px;line-height:1.2;margin:0;text-wrap:balance}
+.date .hijri{color:var(--muted);font-size:13.5px}
+.today-btn{margin-top:4px;border:0;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:12.5px;padding:3px 10px;border-radius:999px}
+
+/* ring */
+.ringwrap{background:var(--surface);border-radius:var(--r);padding:10px 8px 12px;border:1px solid var(--line)}
+#ring{display:block;width:100%;max-width:400px;height:auto;margin:0 auto}
+#ring .hour{fill:var(--muted);font-size:11px;font-family:var(--font-body);font-variant-numeric:tabular-nums}
+#ring .tick{stroke:var(--muted);stroke-width:1;opacity:.55}
+#ring .tick.major{opacity:.9;stroke-width:1.4}
+#ring .plabel{fill:var(--fg);font-size:10.5px;font-weight:600;font-family:var(--font-body)}
+#ring .seg{stroke:var(--surface);stroke-width:1}
+#ring .ker{fill:var(--kerahat)}
+#ring .hatch-line{stroke:var(--makruh);stroke-width:2.6}
+#ring .nightband{fill:var(--p-night)}
+#ring .third{fill:var(--third)}
+#ring .thirdtick{stroke:var(--fg);stroke-width:1.6}
+#ring .midline{stroke:var(--makruh);stroke-width:2.6;stroke-linecap:round}
+#ring .midlabel{fill:var(--makruh);font-size:10px;font-weight:700}
+#ring .now{stroke:var(--fg);stroke-width:2.4;stroke-linecap:round}
+#ring .nowdot{fill:var(--fg)}
+#ring .nowring{fill:var(--surface);stroke:var(--fg);stroke-width:2}
+#ring .c-small{fill:var(--muted);font-size:12px;font-family:var(--font-body)}
+#ring .c-name{fill:var(--fg);font-size:21px;font-family:var(--font-display)}
+#ring .c-count{fill:var(--fg);font-size:27px;font-weight:600;font-family:var(--font-body);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+#ring .c-state{font-size:11.5px;font-weight:700;letter-spacing:.4px}
+.legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;margin-top:6px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:10px;border-radius:3px;display:inline-block}
+.sw.k{background:var(--kerahat)}
+.sw.m{background:repeating-linear-gradient(135deg,var(--makruh) 0 2px,transparent 2px 5px);border:1px solid var(--makruh)}
+.sw.t{background:var(--third)}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.card h2{font-family:var(--font-display);font-weight:400;font-size:17px;margin:0;padding:13px 16px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card h2 small{font-family:var(--font-body);font-size:12px;color:var(--muted)}
+.rows{list-style:none;margin:0;padding:0 0 6px}
+.row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:9px 16px;border-top:1px solid var(--line)}
+.row:first-child{border-top:0}
+.row .ar{font-family:var(--font-ar);font-size:19px;width:66px;text-align:center;color:var(--accent);line-height:1}
+.row .nm{min-width:0}
+.row .nm b{display:block;font-weight:600}
+.row .nm span{display:block;font-size:12.5px;color:var(--muted)}
+.row .tm{font-variant-numeric:tabular-nums;font-weight:600;font-size:19px}
+.row.cur{background:var(--accent-soft)}
+.row.cur .tm{color:var(--accent)}
+.row.next .nm b::after{content:attr(data-next);margin-left:8px;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);padding:1px 7px;border-radius:999px;vertical-align:1px}
+.row.sunrow .tm{color:var(--muted);font-weight:500}
+.mark{width:10px;height:28px;border-radius:4px}
+.row.k .mark{background:var(--kerahat)}
+.row.k .tm{font-size:16px}
+.row.k.active{background:var(--kerahat-soft)}
+.row.n .tm{font-size:17px}
+.row.n .mark.mid{background:repeating-linear-gradient(135deg,var(--makruh) 0 2px,transparent 2px 5px);border:1px solid var(--makruh)}
+.row.n .mark.th{background:var(--third)}
+.row.n .mark.t1{background:var(--p-night)}
+.row.n .mark.len{background:transparent;border:1px dashed var(--muted)}
+.row.n.active{background:var(--third-soft)}
+.row.n.activem{background:var(--makruh-soft)}
+.fb{font-size:11px;color:var(--makruh);font-weight:700}
+
+/* settings */
+.set{padding:4px 16px 14px;display:flex;flex-direction:column;gap:12px}
+.set label{min-width:0;display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted);font-weight:500}
+.set select,.set input{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:15px;width:100%;min-width:0}
+.btn{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:9px 12px;font-weight:600;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px}
+.msg{font-size:13px;color:var(--muted);margin:0}
+.msg.err{color:var(--kerahat)}
+.meta{font-size:13px;color:var(--muted);line-height:1.6;margin:0}
+.meta b{color:var(--fg);font-weight:600}
+.foot{text-align:center;font-size:12px;color:var(--muted)}
+[hidden]{display:none!important}
+.stack{display:flex;flex-direction:column;gap:14px}
+.golist{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px 16px;font-weight:600;text-align:left}
+.golist small{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
+.golist svg{flex:none;color:var(--accent)}
+.lhead{display:flex;align-items:center;gap:10px}
+.lhead h1{font-family:var(--font-display);font-weight:400;font-size:22px;margin:0;line-height:1.2}
+.lhead p{margin:0;font-size:13px;color:var(--muted)}
+.sum{padding:2px 16px 14px;font-size:14px;margin:0}
+.sum b{font-weight:600}
+#lenChart{display:block;width:100%;height:auto}
+#lenChart .ax{fill:var(--muted);font-size:10.5px;font-family:var(--font-body);font-variant-numeric:tabular-nums}
+#lenChart .grid{stroke:var(--line);stroke-width:1}
+#lenChart .line{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linejoin:round}
+#lenChart .area{fill:var(--accent-soft)}
+#lenChart .end{fill:var(--accent)}
+#lenChart .endlab{fill:var(--fg);font-size:11px;font-weight:600;font-family:var(--font-body)}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:12.5px}
+.tbl th{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;padding:8px 2px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th:first-child,.tbl td:first-child{text-align:left;padding-left:8px}
+.tbl th:last-child,.tbl td:last-child{padding-right:8px;text-align:right}
+.tbl td{text-align:center;padding:7px 2px;border-top:1px solid var(--line);white-space:nowrap}
+.tbl td.d b{display:block;font-weight:600}
+.tbl td.d span{display:block;font-size:10.5px;color:var(--muted);max-width:72px;overflow:hidden;text-overflow:ellipsis}
+.tbl td.sun{color:var(--muted)}
+.tbl td.len b{display:block;font-weight:600}
+.tbl td.len span{display:block;font-size:11px;font-weight:600}
+.dn{color:var(--kerahat)} .up{color:var(--accent)}
+.tbl tr.fri td{background:var(--surface-2)}
+.tbl tr.today td{background:var(--accent-soft)}
+.tbl tr.mon td{background:transparent;font-family:var(--font-display);font-size:15px;text-align:left;padding:14px 12px 6px;border-top:0;color:var(--fg)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <div class="top">
+    <button class="place" id="placeBtn" type="button" aria-label="Ort">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+      <span id="placeName">…</span>
+    </button>
+    <div class="lang" role="group" aria-label="Sprache / Dil">
+      <button type="button" id="langDe" aria-pressed="true">DE</button>
+      <button type="button" id="langTr" aria-pressed="false">TR</button>
+    </div>
+  </div>
+
+  <div id="mainView" class="stack">
+  <div class="date">
+    <button class="nav" id="prevDay" type="button" aria-label="Vorheriger Tag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="mid">
+      <h1 id="gDate">…</h1>
+      <div class="hijri" id="hDate"></div>
+      <button class="today-btn" id="todayBtn" type="button" hidden></button>
+    </div>
+    <button class="nav" id="nextDay" type="button" aria-label="Nächster Tag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
+
+  <div class="ringwrap">
+    <svg id="ring" viewBox="0 0 400 400" role="img" aria-label="24-Stunden-Ring"></svg>
+    <div class="legend">
+      <span><i class="sw k"></i><em id="lgK" style="font-style:normal"></em></span>
+      <span><i class="sw m"></i><em id="lgM" style="font-style:normal"></em></span>
+      <span><i class="sw t"></i><em id="lgT" style="font-style:normal"></em></span>
+    </div>
+  </div>
+
+  <button class="golist" id="openList" type="button"><span><span id="goListT"></span><small id="goListS"></small></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+
+  <section class="card">
+    <h2><span id="hPrayers"></span><small id="hPrayersSub"></small></h2>
+    <ul class="rows" id="prayerRows"></ul>
+  </section>
+
+  <section class="card">
+    <h2><span id="hKerahat"></span><small id="hKerahatSub"></small></h2>
+    <ul class="rows" id="kerRows"></ul>
+  </section>
+
+  <section class="card">
+    <h2><span id="hNight"></span><small id="hNightSub"></small></h2>
+    <ul class="rows" id="nightRows"></ul>
+  </section>
+
+  <section class="card" id="placeCard">
+    <h2><span id="hPlace"></span></h2>
+    <div class="set">
+      <div class="btnrow"><button class="btn primary" type="button" id="gpsBtn"></button></div>
+      <p class="msg" id="gpsMsg" hidden></p>
+      <label><span id="lCity"></span><select id="citySel"></select></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span id="hSettings"></span></h2>
+    <div class="set">
+      <p class="meta" id="methodMeta"></p>
+      <label><span id="lHijri"></span>
+        <select id="hijriSel"><option value="-1">−1</option><option value="0">0</option><option value="1">+1</option></select>
+      </label>
+    </div>
+  </section>
+
+  </div>
+
+  <div id="listView" class="stack" hidden>
+    <div class="lhead">
+      <button class="nav" id="closeList" type="button" aria-label="Zurück" style="flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div><h1 id="lTitle"></h1><p id="lSub"></p></div>
+    </div>
+    <section class="card">
+      <h2><span id="hLen"></span><small id="hLenSub"></small></h2>
+      <svg id="lenChart" viewBox="0 0 360 150" role="img"></svg>
+      <p class="sum" id="lenSum"></p>
+    </section>
+    <section class="card">
+      <div class="tblwrap"><table class="tbl" id="dayTbl"></table></div>
+    </section>
+  </div>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- storage (per device convenience only) ---------- */
+const store={get(k,d){try{const v=localStorage.getItem("vakit."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+             set(k,v){try{localStorage.setItem("vakit."+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- settings: Muslim World League, Shafi'i, no high-latitude rule, Osman's offsets ---------- */
+const METHOD={fajr:18,isha:17,asrFactor:1};
+const OFFSETS={fajr:0,shuruq:-7,dhuhr:5,asr:4,maghrib:7,isha:0};
+const KERAHAT_MIN=45;
+
+/* ---------- places ---------- */
+const CITIES=[
+ {g:"Tirol",items:[
+  ["Innsbruck-Land (Bezirk)",47.24,11.09,"Europe/Vienna"],["Innsbruck",47.2692,11.4041,"Europe/Vienna"],["Hall in Tirol",47.2833,11.5079,"Europe/Vienna"],
+  ["Telfs",47.3070,11.0720,"Europe/Vienna"],["Schwaz",47.3500,11.7000,"Europe/Vienna"],["Imst",47.2394,10.7381,"Europe/Vienna"],
+  ["Zams",47.1581,10.5897,"Europe/Vienna"],["Landeck",47.1397,10.5658,"Europe/Vienna"],["Wörgl",47.4894,12.0619,"Europe/Vienna"],
+  ["Kufstein",47.5833,12.1667,"Europe/Vienna"],["Lienz",46.8297,12.7697,"Europe/Vienna"]]},
+ {g:"Österreich",items:[
+  ["Bregenz",47.5031,9.7471,"Europe/Vienna"],["Dornbirn",47.4125,9.7417,"Europe/Vienna"],["Salzburg",47.8095,13.0550,"Europe/Vienna"],
+  ["Linz",48.3069,14.2858,"Europe/Vienna"],["Wien",48.2082,16.3738,"Europe/Vienna"],["Graz",47.0707,15.4395,"Europe/Vienna"],["Klagenfurt",46.6249,14.3050,"Europe/Vienna"]]},
+ {g:"Deutschland / Schweiz",items:[
+  ["München",48.1351,11.5820,"Europe/Berlin"],["Stuttgart",48.7758,9.1829,"Europe/Berlin"],["Köln",50.9375,6.9603,"Europe/Berlin"],
+  ["Berlin",52.5200,13.4050,"Europe/Berlin"],["Zürich",47.3769,8.5417,"Europe/Zurich"]]},
+ {g:"Türkiye",items:[
+  ["İstanbul",41.0082,28.9784,"Europe/Istanbul"],["Ankara",39.9334,32.8597,"Europe/Istanbul"],["İzmir",38.4237,27.1428,"Europe/Istanbul"],
+  ["Konya",37.8746,32.4932,"Europe/Istanbul"],["Kayseri",38.7205,35.4826,"Europe/Istanbul"]]},
+ {g:"Haramain",items:[["Mekka",21.3891,39.8579,"Asia/Riyadh"],["Medina",24.4686,39.6142,"Asia/Riyadh"]]}
+];
+const STANDALONE=!!window.VAKIT_STANDALONE;
+const DEVICE_TZ=(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"Europe/Vienna"}catch(e){return "Europe/Vienna"}})();
+let place=store.get("place",null)||{name:"Innsbruck-Land (Bezirk)",lat:47.24,lon:11.09,tz:"Europe/Vienna",src:"city"};
+
+/* ---------- language ---------- */
+const T={
+ de:{loc:"de-AT",prayers:"Gebetszeiten",prayersSub:"Muslim World League",kerahat:"Kerahat-Zeiten",kerahatSub:"je 45 Minuten",
+  night:"Die Nacht",nightSub:"von Maghrib bis Fajr",place:"Ort",settings:"Einstellungen",
+  sub:{fajr:"Morgengebet",shuruq:"Sonnenaufgang",dhuhr:"Mittagsgebet",asr:"Nachmittagsgebet",maghrib:"Abendgebet",isha:"Nachtgebet"},
+  ker:["Nach Sonnenaufgang","Vor dem Zenit (Istiwa)","Vor Sonnenuntergang"],
+  kerSub:["kein Gebet","kein Gebet","kein freiwilliges Gebet, Asr des Tages erlaubt"],
+  nightRows:["Islamische Mitternacht","Ende erstes Drittel","Beginn letztes Drittel","Länge der Nacht"],
+  nightSubs:["danach Isha makruh","","für Nachtgebete (Teheddschud)","Maghrib bis Fajr"],
+  legK:"Kerahat",legM:"Isha makruh (nach Mitternacht)",legT:"Letztes Drittel",
+  next:"als Nächstes",untilFmt:(n,t)=>`bis ${n} · ${t}`,now:"Jetzt",today:"Heute",
+  stK:"KERAHAT-ZEIT",stM:"NACH MITTERNACHT",stT:"LETZTES DRITTEL",
+  gps:"Meinen Standort verwenden",gpsWait:"Standort wird ermittelt …",
+  gpsErr:"Der Standort ist in dieser Ansicht nicht verfügbar. Wähle deine Stadt aus der Liste.",
+  gpsOk:"Standort übernommen.",city:"Ort aus der Liste",lat:"Breitengrad",lon:"Längengrad",apply:"Koordinaten übernehmen",
+  coordErr:"Bitte gültige Zahlen eingeben, zum Beispiel 47.24 und 11.09.",myPlace:"Mein Standort",manual:"Eigene Koordinaten",
+  hijri:"Hidschri-Datum korrigieren (Tage)",
+  method:(o)=>`<b>Berechnung:</b> Muslim World League (Fajr 18°, Isha 17°), Asr nach Schafi'i, keine Hochbreiten-Korrektur.<br><b>Korrekturen:</b> Fajr ${o.fajr}, Shuruq ${o.shuruq}, Dhuhr +${o.dhuhr}, Asr +${o.asr}, Maghrib +${o.maghrib}, Isha ${o.isha} Minuten.<br><b>Kerahat und Nacht</b> werden von den angezeigten Zeiten aus berechnet.`,
+  fb:"* Hochbreiten-Ersatzwert",foot:(p)=>`${p.name} · ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)} · ${p.tz}`,
+  goListT:"Nächste 45 Tage",goListS:"Alle Gebetszeiten und Tageslänge als Liste",
+  lTitle:"Die nächsten 45 Tage",lenH:"Tageslänge",lenSub:"Sonnenaufgang bis Sonnenuntergang",dayCol:"Tag",
+  lenSum:(a,b,d,per)=>`Von <b>${a}</b> auf <b>${b}</b>, die Tage werden ${d<0?"kürzer":"länger"}, insgesamt <b>${d<0?"−":"+"}${Math.abs(d)} min</b> (im Schnitt ${per} min pro Tag).`,
+  hm:["Muharram","Safar","Rabi al-Awwal","Rabi al-Thani","Jumada al-Ula","Jumada al-Akhira","Radschab","Schaban","Ramadan","Schawwal","Dhu l-Qada","Dhu l-Hiddscha"]},
+ tr:{loc:"tr-TR",prayers:"Namaz vakitleri",prayersSub:"Muslim World League",kerahat:"Kerahat vakitleri",kerahatSub:"her biri 45 dakika",
+  night:"Gece",nightSub:"Akşamdan sabaha",place:"Konum",settings:"Ayarlar",
+  sub:{fajr:"Sabah namazı",shuruq:"Güneş doğuşu",dhuhr:"Öğle namazı",asr:"İkindi namazı",maghrib:"Akşam namazı",isha:"Yatsı namazı"},
+  ker:["Güneş doğduktan sonra","İstivâ (öğleden önce)","Güneş batmadan önce"],
+  kerSub:["namaz kılınmaz","namaz kılınmaz","nafile kılınmaz, günün ikindisi kılınabilir"],
+  nightRows:["Şer'î gece yarısı","Birinci üçte birin sonu","Son üçte birin başlangıcı","Gecenin uzunluğu"],
+  nightSubs:["sonrasında yatsı mekruh","","gece namazı (teheccüd) için","akşamdan sabaha"],
+  legK:"Kerahat",legM:"Yatsı mekruh (gece yarısından sonra)",legT:"Son üçte bir",
+  next:"sıradaki",untilFmt:(n,t)=>`${n} vaktine · ${t}`,now:"Şimdi",today:"Bugün",
+  stK:"KERAHAT VAKTİ",stM:"GECE YARISINDAN SONRA",stT:"SON ÜÇTE BİR",
+  gps:"Konumumu kullan",gpsWait:"Konum belirleniyor …",
+  gpsErr:"Bu görünümde konum kullanılamıyor. Listeden şehrini seç.",
+  gpsOk:"Konum alındı.",city:"Listeden yer",lat:"Enlem",lon:"Boylam",apply:"Koordinatları uygula",
+  coordErr:"Lütfen geçerli sayılar gir, örneğin 47.24 ve 11.09.",myPlace:"Konumum",manual:"Kendi koordinatlarım",
+  hijri:"Hicri tarihi düzelt (gün)",
+  method:(o)=>`<b>Hesaplama:</b> Muslim World League (Sabah 18°, Yatsı 17°), İkindi Şafiî'ye göre, yüksek enlem düzeltmesi yok.<br><b>Temkin:</b> Sabah ${o.fajr}, Güneş ${o.shuruq}, Öğle +${o.dhuhr}, İkindi +${o.asr}, Akşam +${o.maghrib}, Yatsı ${o.isha} dakika.<br><b>Kerahat ve gece</b> gösterilen vakitlere göre hesaplanır.`,
+  fb:"* yüksek enlem yedek değeri",foot:(p)=>`${p.name} · ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)} · ${p.tz}`,
+  goListT:"Önümüzdeki 45 gün",goListS:"Tüm vakitler ve gün uzunluğu liste halinde",
+  lTitle:"Önümüzdeki 45 gün",lenH:"Gün uzunluğu",lenSub:"Güneş doğuşundan batışına",dayCol:"Gün",
+  lenSum:(a,b,d,per)=>`<b>${a}</b> süreden <b>${b}</b> süreye, günler ${d<0?"kısalıyor":"uzuyor"}, toplam <b>${d<0?"−":"+"}${Math.abs(d)} dk</b> (günde ortalama ${per} dk).`,
+  name:{fajr:"İmsak",shuruq:"Güneş",dhuhr:"Öğle",asr:"İkindi",maghrib:"Akşam",isha:"Yatsı"},
+  hm:["Muharrem","Safer","Rebiülevvel","Rebiülahir","Cemaziyelevvel","Cemaziyelahir","Recep","Şaban","Ramazan","Şevval","Zilkade","Zilhicce"]}
+};
+let lang=store.get("lang","de"); if(!T[lang]) lang="de";
+let hijriOff=+store.get("hijriOff",0)||0;
+
+const KEYS=["fajr","shuruq","dhuhr","asr","maghrib","isha"];
+const NAME={fajr:"Fajr",shuruq:"Shuruq",dhuhr:"Dhuhr",asr:"Asr",maghrib:"Maghrib",isha:"Isha"};
+const nm=k=>lang==="tr"?T.tr.name[k]:NAME[k];
+const AR={fajr:"الفجر",shuruq:"الشروق",dhuhr:"الظهر",asr:"العصر",maghrib:"المغرب",isha:"العشاء"};
+
+/* ---------- astronomy (PrayTimes.org algorithm, one pass) ---------- */
+const RAD=Math.PI/180, DEG=180/Math.PI;
+function julian(y,m,d){if(m<=2){y-=1;m+=12}const A=Math.floor(y/100),B=2-A+Math.floor(A/4);return Math.floor(365.25*(y+4716))+Math.floor(30.6001*(m+1))+d+B-1524.5}
+function rawTimes(lat,lon,y,mo,d,tz){
+  const jd=julian(y,mo,d)-lon/360;
+  const sun=t=>{const D=jd+t-2451545,g=(357.529+0.98560028*D)%360,q=(280.459+0.98564736*D)%360,
+    L=(q+1.915*Math.sin(g*RAD)+0.020*Math.sin(2*g*RAD))%360,e=23.439-0.00000036*D;
+    const RA=((Math.atan2(Math.cos(e*RAD)*Math.sin(L*RAD),Math.cos(L*RAD))*DEG)/15+24)%24;
+    let eq=q/15-RA; eq=((eq%24)+24+12)%24-12;
+    return {dec:Math.asin(Math.sin(e*RAD)*Math.sin(L*RAD))*DEG,eq}};
+  const noon=t=>((12-sun(t).eq)%24+24)%24;
+  const sunAngle=(ang,t,ccw)=>{const s=sun(t),n=noon(t);
+    const c=(-Math.sin(ang*RAD)-Math.sin(s.dec*RAD)*Math.sin(lat*RAD))/(Math.cos(s.dec*RAD)*Math.cos(lat*RAD));
+    if(c<-1||c>1) return NaN; const h=Math.acos(c)*DEG/15; return n+(ccw?-h:h)};
+  const asr=(f,t)=>{const s=sun(t);return sunAngle(-Math.atan(1/(f+Math.tan(Math.abs(lat-s.dec)*RAD)))*DEG,t,false)};
+  const g={f:5/24,s:6/24,d:12/24,a:13/24,m:18/24,i:18/24};
+  const r={fajr:sunAngle(METHOD.fajr,g.f,true),shuruq:sunAngle(0.833,g.s,true),dhuhr:noon(g.d),
+           asr:asr(METHOD.asrFactor,g.a),maghrib:sunAngle(0.833,g.m,false),isha:sunAngle(METHOD.isha,g.i,false)};
+  const fallback={};
+  // fallback only where the sun never reaches the angle (far north in summer): angle-based portion of the night
+  const night=(r.shuruq-r.maghrib+24)%24;
+  if(isNaN(r.fajr)&&!isNaN(r.shuruq)){r.fajr=r.shuruq-METHOD.fajr/60*night;fallback.fajr=true}
+  if(isNaN(r.isha)&&!isNaN(r.maghrib)){r.isha=r.maghrib+METHOD.isha/60*night;fallback.isha=true}
+  const out={};
+  for(const k of KEYS){const h=r[k]+tz-lon/15;out[k]=Math.round(h*60+OFFSETS[k])}
+  out.fallback=fallback;
+  return out;
+}
+
+/* ---------- time zone helpers ---------- */
+function partsIn(tz,date){
+  const f=new Intl.DateTimeFormat("en-GB",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"});
+  const p={};for(const x of f.formatToParts(date)) p[x.type]=x.value;
+  return {y:+p.year,m:+p.month,d:+p.day,H:+p.hour%24,M:+p.minute,S:+p.second};
+}
+function tzOffsetHours(tz,y,m,d){
+  const utc=Date.UTC(y,m-1,d,12,0,0);const p=partsIn(tz,new Date(utc));
+  return (Date.UTC(p.y,p.m-1,p.d,p.H,p.M,p.S)-utc)/3600000;
+}
+function addDays(o,n){const t=new Date(Date.UTC(o.y,o.m-1,o.d+n));return {y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate()}}
+function sameDay(a,b){return a.y===b.y&&a.m===b.m&&a.d===b.d}
+function timesFor(day){return rawTimes(place.lat,place.lon,day.y,day.m,day.d,tzOffsetHours(place.tz,day.y,day.m,day.d))}
+const fmt=m=>{if(m==null||isNaN(m))return "––:––";m=((Math.round(m)%1440)+1440)%1440;return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")};
+const fmtDur=m=>{m=Math.round(m);return Math.floor(m/60)+" h "+String(m%60).padStart(2,"0")+" min"};
+
+/* ---------- derived: kerahat and night ---------- */
+function derive(day){
+  const t=timesFor(day), tn=timesFor(addDays(day,1)), tp=timesFor(addDays(day,-1));
+  const ker=[[t.shuruq,t.shuruq+KERAHAT_MIN],[t.dhuhr-KERAHAT_MIN,t.dhuhr],[t.maghrib-KERAHAT_MIN,t.maghrib]];
+  const mkNight=(start,end)=>{const L=end-start;return {start,end,len:L,mid:Math.round(start+L/2),t1:Math.round(start+L/3),t2:Math.round(start+2*L/3)}};
+  const tonight=mkNight(t.maghrib,tn.fajr+1440);      // this evening → tomorrow's Fajr
+  const lastNight=mkNight(tp.maghrib-1440,t.fajr);    // yesterday evening → this morning's Fajr
+  return {t,tn,ker,tonight,lastNight};
+}
+
+/* ---------- ring drawing ---------- */
+const SVGNS="http://www.w3.org/2000/svg", C=200;
+const R={outO:154,outI:122,nO:116,nI:104,lab:91,tickO:166,tickI:159,hour:180};
+const ang=m=>((m/1440)*360+180)*RAD;                 // 12:00 at the top, 00:00 at the bottom, clockwise
+const pt=(r,m)=>[C+r*Math.sin(ang(m)),C-r*Math.cos(ang(m))];
+function sector(r1,r2,m1,m2){
+  m1=Math.max(0,m1);m2=Math.min(1440,m2);if(!(m2>m1))return "";
+  if(m2-m1>=1439.9){m2=m1+1439.9}
+  const large=(m2-m1)>720?1:0,[a,b]=pt(r2,m1),[c,d]=pt(r2,m2),[e,f]=pt(r1,m2),[g,h]=pt(r1,m1);
+  return `M${a.toFixed(2)} ${b.toFixed(2)}A${r2} ${r2} 0 ${large} 1 ${c.toFixed(2)} ${d.toFixed(2)}L${e.toFixed(2)} ${f.toFixed(2)}A${r1} ${r1} 0 ${large} 0 ${g.toFixed(2)} ${h.toFixed(2)}Z`;
+}
+function el(tag,attrs,parent,text){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e}
+let centerRefs=null, nowRefs=null;
+
+function drawRing(day,D){
+  const s=document.getElementById("ring");s.innerHTML="";
+  const defs=el("defs",{},s);
+  const pat=el("pattern",{id:"hatch",width:"7",height:"7",patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
+  el("line",{x1:"0",y1:"0",x2:"0",y2:"7",class:"hatch-line"},pat);
+  const t=D.t;
+  // periods
+  const per=[[0,t.fajr,"--p-isha"],[t.fajr,t.shuruq,"--p-fajr"],[t.shuruq,t.dhuhr,"--p-duha"],[t.dhuhr,t.asr,"--p-dhuhr"],
+             [t.asr,t.maghrib,"--p-asr"],[t.maghrib,t.isha,"--p-maghrib"],[t.isha,1440,"--p-isha"]];
+  for(const [a,b,v] of per){const d=sector(R.outI,R.outO,a,b);if(d)el("path",{d,class:"seg",style:`fill:var(${v})`},s)}
+  // isha makruh hatch (after islamic midnight until Fajr)
+  for(const n of [D.lastNight,D.tonight]){const d=sector(R.outI,R.outO,n.mid,n.end);if(d)el("path",{d,fill:"url(#hatch)"},s)}
+  // kerahat
+  for(const [a,b] of D.ker){const d=sector(R.outI-3,R.outO+3,a,b);if(d)el("path",{d,class:"ker"},s)}
+  // night band with thirds
+  for(const n of [D.lastNight,D.tonight]){
+    const d1=sector(R.nI,R.nO,n.start,n.end);if(d1)el("path",{d:d1,class:"nightband"},s);
+    const d2=sector(R.nI,R.nO,n.t2,n.end);if(d2)el("path",{d:d2,class:"third"},s);
+    for(const m of [n.t1,n.t2]){if(m>0&&m<1440){const [x1,y1]=pt(R.nI-3,m),[x2,y2]=pt(R.nO+3,m);el("line",{x1,y1,x2,y2,class:"thirdtick"},s)}}
+    if(n.mid>0&&n.mid<1440){
+      const [x1,y1]=pt(R.nI-6,n.mid),[x2,y2]=pt(R.outO+6,n.mid);el("line",{x1,y1,x2,y2,class:"midline"},s);
+      const [lx,ly]=pt(R.nI-15,n.mid);el("text",{x:lx,y:ly+3.5,"text-anchor":"middle",class:"midlabel"},s,fmt(n.mid));
+    }
+  }
+  // hour ticks + labels
+  for(let h=0;h<24;h++){const m=h*60,major=h%3===0;const [x1,y1]=pt(R.tickI+(major?-3:0),m),[x2,y2]=pt(R.tickO,m);
+    el("line",{x1,y1,x2,y2,class:"tick"+(major?" major":"")},s);
+    if(major){const [x,y]=pt(R.hour,m);el("text",{x,y:y+4,"text-anchor":"middle",class:"hour"},s,String(h).padStart(2,"0"))}}
+  // prayer labels inside the ring
+  const short={fajr:nm("fajr"),dhuhr:nm("dhuhr"),asr:nm("asr"),maghrib:nm("maghrib"),isha:nm("isha")};
+  for(const k in short){const a=t[k],b={fajr:t.shuruq,dhuhr:t.asr,asr:t.maghrib,maghrib:t.isha,isha:Math.min(D.tonight.mid,1440)}[k];
+    const m=(a+b)/2;const [x,y]=pt(R.lab,m);el("text",{x,y:y+3.5,"text-anchor":"middle",class:"plabel"},s,short[k])}
+  // now pointer (only for today)
+  const g=el("g",{id:"nowG"},s);
+  const ln=el("line",{class:"now"},g), dot=el("circle",{r:"5.5",class:"nowring"},g);
+  nowRefs={g,ln,dot};
+  // center
+  const cs=el("text",{x:C,y:C-34,"text-anchor":"middle",class:"c-small"},s);
+  const cn=el("text",{x:C,y:C-8,"text-anchor":"middle",class:"c-name"},s);
+  const cc=el("text",{x:C,y:C+24,"text-anchor":"middle",class:"c-count"},s);
+  const st=el("text",{x:C,y:C+46,"text-anchor":"middle",class:"c-state"},s);
+  centerRefs={cs,cn,cc,st};
+}
+
+/* ---------- lists ---------- */
+function rows(D){
+  const L=T[lang],t=D.t;
+  const pr=document.getElementById("prayerRows");pr.innerHTML="";
+  for(const k of KEYS){
+    const li=document.createElement("li");li.className="row"+(k==="shuruq"?" sunrow":"");li.dataset.k=k;
+    const fb=t.fallback[k]?' <span class="fb">*</span>':"";
+    li.innerHTML=`<span class="ar" lang="ar">${AR[k]}</span><span class="nm"><b data-next="${L.next}">${nm(k)}</b>${lang==="tr"?"":`<span>${L.sub[k]}</span>`}</span><span class="tm">${fmt(t[k])}${fb}</span>`;
+    pr.appendChild(li);
+  }
+  if(t.fallback.fajr||t.fallback.isha){const li=document.createElement("li");li.className="row";li.innerHTML=`<span></span><span class="nm"><span>${L.fb}</span></span><span></span>`;pr.appendChild(li)}
+  const kr=document.getElementById("kerRows");kr.innerHTML="";
+  D.ker.forEach(([a,b],i)=>{const li=document.createElement("li");li.className="row k";li.dataset.a=a;li.dataset.b=b;
+    li.innerHTML=`<span class="mark"></span><span class="nm"><b>${L.ker[i]}</b><span>${L.kerSub[i]}</span></span><span class="tm">${fmt(a)} – ${fmt(b)}</span>`;kr.appendChild(li)});
+  const nr=document.getElementById("nightRows");nr.innerHTML="";
+  const n=D.tonight;
+  const items=[["mid",n.mid],["t1",n.t1],["th",n.t2],["len",null]];
+  items.forEach(([cls,v],i)=>{const li=document.createElement("li");li.className="row n";li.dataset.kind=cls;
+    const val=cls==="len"?fmtDur(n.len):fmt(v);
+    const sub=cls==="len"?`${fmt(n.start)} – ${fmt(n.end)}`:L.nightSubs[i];
+    li.innerHTML=`<span class="mark ${cls}"></span><span class="nm"><b>${L.nightRows[i]}</b>${sub?`<span>${sub}</span>`:""}</span><span class="tm">${val}</span>`;nr.appendChild(li)});
+}
+
+/* ---------- state + render ---------- */
+let viewDay=null, D=null;
+function todayInPlace(){const p=partsIn(place.tz,new Date());return {y:p.y,m:p.m,d:p.d}}
+function nowMin(){const p=partsIn(place.tz,new Date());return {day:{y:p.y,m:p.m,d:p.d},min:p.H*60+p.M+p.S/60}}
+
+function hijriText(day){
+  const L=T[lang];const base=new Date(Date.UTC(day.y,day.m-1,day.d+hijriOff,12));
+  for(const ca of ["islamic-umalqura","islamic"]){
+    try{const f=new Intl.DateTimeFormat("en-u-ca-"+ca+"-nu-latn",{day:"numeric",month:"numeric",year:"numeric",timeZone:"UTC"});
+      const p={};for(const x of f.formatToParts(base))p[x.type]=x.value;
+      if(f.resolvedOptions().calendar.indexOf("islamic")===0&&p.month){return `${parseInt(p.day,10)}. ${L.hm[parseInt(p.month,10)-1]} ${parseInt(p.year,10)}`.replace(/^(\d+)\. /,lang==="tr"?"$1 ":"$1. ")}
+    }catch(e){}
+  }
+  return "";
+}
+
+function render(){
+  const L=T[lang];
+  document.documentElement.lang=lang;
+  document.getElementById("langDe").setAttribute("aria-pressed",String(lang==="de"));
+  document.getElementById("langTr").setAttribute("aria-pressed",String(lang==="tr"));
+  const txt={hPrayers:L.prayers,hPrayersSub:L.prayersSub,hKerahat:L.kerahat,hKerahatSub:L.kerahatSub,hNight:L.night,hNightSub:L.nightSub,
+    hPlace:L.place,hSettings:L.settings,lgK:L.legK,lgM:L.legM,lgT:L.legT,gpsBtn:L.gps,lCity:L.city,lHijri:L.hijri,todayBtn:L.today,goListT:L.goListT,goListS:L.goListS,lTitle:L.lTitle,hLen:L.lenH,hLenSub:L.lenSub};
+  for(const id in txt)document.getElementById(id).textContent=txt[id];
+  document.getElementById("methodMeta").innerHTML=L.method(OFFSETS);
+  document.getElementById("placeName").textContent=place.src==="gps"?`${L.myPlace}${place.near?" · "+place.near:""}`:place.src==="manual"?L.manual:place.name;
+  document.getElementById("foot").textContent=L.foot(place);
+  const dt=new Date(Date.UTC(viewDay.y,viewDay.m-1,viewDay.d,12));
+  document.getElementById("gDate").textContent=new Intl.DateTimeFormat(L.loc,{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(dt);
+  document.getElementById("hDate").textContent=hijriText(viewDay);
+  document.getElementById("todayBtn").hidden=sameDay(viewDay,todayInPlace());
+  document.getElementById("hijriSel").value=String(hijriOff);
+  D=derive(viewDay);
+  drawRing(viewDay,D);
+  rows(D);
+  if(!document.getElementById("listView").hidden) renderList();
+  tick();
+}
+
+/* ---------- 45-day list ---------- */
+const DAYS=45;
+function renderList(){
+  const L=T[lang],start=todayInPlace();
+  const data=[];
+  for(let i=0;i<DAYS;i++){const day=addDays(start,i),t=timesFor(day);
+    data.push({day,t,len:(t.maghrib-OFFSETS.maghrib)-(t.shuruq-OFFSETS.shuruq)})}
+  // prev day for first delta
+  const tp=timesFor(addDays(start,-1));let prevLen=(tp.maghrib-OFFSETS.maghrib)-(tp.shuruq-OFFSETS.shuruq);
+  const wdF=new Intl.DateTimeFormat(L.loc,{weekday:"short",timeZone:"UTC"}), mF=new Intl.DateTimeFormat(L.loc,{month:"long",year:"numeric",timeZone:"UTC"});
+  const dt=d=>new Date(Date.UTC(d.y,d.m-1,d.d,12));
+  const dd=d=>String(d.d).padStart(2,"0")+"."+String(d.m).padStart(2,"0")+".";
+  document.getElementById("lSub").textContent=`${dd(start)}${start.y} – ${dd(data[DAYS-1].day)}${data[DAYS-1].day.y} · ${place.src==="city"?place.name:(place.src==="gps"?L.myPlace:L.manual)}`;
+  // table
+  let h=`<thead><tr><th>${L.dayCol}</th>${KEYS.map(k=>`<th>${nm(k)}</th>`).join("")}<th>${L.dayCol==='Tag'?'Länge':'Süre'}</th></tr></thead><tbody>`;
+  let lastM=null;
+  data.forEach((r,i)=>{
+    if(r.day.m!==lastM){h+=`<tr class="mon"><td colspan="8">${mF.format(dt(r.day))}</td></tr>`;lastM=r.day.m}
+    const delta=Math.round(r.len-prevLen);prevLen=r.len;
+    const fri=dt(r.day).getUTCDay()===5;
+    const cls=[i===0?"today":"",fri?"fri":""].join(" ").trim();
+    h+=`<tr class="${cls}"><td class="d"><b>${dd(r.day).slice(0,5)}</b><span>${wdF.format(dt(r.day))}</span></td>`+
+       KEYS.map(k=>`<td class="${k==="shuruq"?"sun":""}">${fmt(r.t[k])}</td>`).join("")+
+       `<td class="len"><b>${Math.floor(r.len/60)}:${String(Math.round(r.len%60)).padStart(2,"0")}</b><span class="${delta<0?"dn":delta>0?"up":""}">${delta>0?"+":delta<0?"−":"±"}${Math.abs(delta)}</span></td></tr>`;
+  });
+  document.getElementById("dayTbl").innerHTML=h+"</tbody>";
+  // chart
+  const svg=document.getElementById("lenChart"),W=360,H=150,pl=40,pr=14,pt2=18,pb=26;
+  const lens=data.map(r=>r.len),mn=Math.min(...lens),mx=Math.max(...lens);
+  const lo=Math.floor((mn-5)/15)*15,hi=Math.ceil((mx+5)/15)*15;
+  const X=i=>pl+(W-pl-pr)*i/(DAYS-1),Y=v=>pt2+(H-pt2-pb)*(1-(v-lo)/(hi-lo));
+  const hm=v=>Math.floor(v/60)+":"+String(Math.round(v%60)).padStart(2,"0");
+  let g="";
+  const step=(hi-lo)>90?30:15;
+  for(let v=lo;v<=hi;v+=step){g+=`<line class="grid" x1="${pl}" x2="${W-pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}"/><text class="ax" x="${pl-6}" y="${(Y(v)+3.5).toFixed(1)}" text-anchor="end">${hm(v)}</text>`}
+  [0,Math.floor((DAYS-1)/2),DAYS-1].forEach(i=>{g+=`<text class="ax" x="${X(i).toFixed(1)}" y="${H-8}" text-anchor="${i===0?"start":i===DAYS-1?"end":"middle"}">${dd(data[i].day)}</text>`});
+  const pts=lens.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`);
+  g+=`<path class="area" d="M${pts[0]} L${pts.join(" L")} L${X(DAYS-1).toFixed(1)},${H-pb} L${X(0).toFixed(1)},${H-pb}Z"/>`;
+  g+=`<polyline class="line" points="${pts.join(" ")}"/>`;
+  g+=`<circle class="end" cx="${X(0)}" cy="${Y(lens[0])}" r="3.5"/><circle class="end" cx="${X(DAYS-1)}" cy="${Y(lens[DAYS-1])}" r="3.5"/>`;
+  g+=`<text class="endlab" x="${X(0)+6}" y="${Y(lens[0])-7}">${hm(lens[0])}</text><text class="endlab" x="${X(DAYS-1)-6}" y="${Y(lens[DAYS-1])-7}" text-anchor="end">${hm(lens[DAYS-1])}</text>`;
+  svg.innerHTML=g;
+  const tot=Math.round(lens[DAYS-1]-lens[0]);
+  document.getElementById("lenSum").innerHTML=L.lenSum(hm(lens[0]),hm(lens[DAYS-1]),tot,(Math.abs(tot)/(DAYS-1)).toFixed(1).replace(".",lang==="de"?",":","));
+}
+function hijriShort(day){const s=hijriText(day);return s}
+function showList(on){
+  document.getElementById("listView").hidden=!on;document.getElementById("mainView").hidden=on;
+  try{history.replaceState(null,"",on?"#tage":"#")}catch(e){}
+  if(on)renderList();
+  window.scrollTo(0,0);
+}
+
+function tick(){
+  if(!D)return;
+  const L=T[lang];const n=nowMin();
+  if(!sameDay(n.day,viewDay)){
+    // other day in view: no pointer, center shows the day's Fajr–Isha span
+    nowRefs.g.setAttribute("visibility","hidden");
+    centerRefs.cs.textContent=nm("fajr")+" – "+nm("isha");centerRefs.cn.textContent=fmt(D.t.fajr)+" – "+fmt(D.t.isha);
+    centerRefs.cn.setAttribute("style","font-size:17px");centerRefs.cc.textContent="";centerRefs.st.textContent="";
+    for(const r of document.querySelectorAll(".row"))r.classList.remove("cur","next","active","activem");
+    return;
+  }
+  // after local midnight the view rolls to the new day on its own
+  const t=D.t,m=n.min;
+  nowRefs.g.setAttribute("visibility","visible");
+  const [x1,y1]=pt(R.nI-8,m),[x2,y2]=pt(R.outO+4,m),[dx,dy]=pt(R.outO+9,m);
+  nowRefs.ln.setAttribute("x1",x1);nowRefs.ln.setAttribute("y1",y1);nowRefs.ln.setAttribute("x2",x2);nowRefs.ln.setAttribute("y2",y2);
+  nowRefs.dot.setAttribute("cx",dx);nowRefs.dot.setAttribute("cy",dy);
+  // next event
+  const ev=KEYS.map(k=>[k,t[k]]).filter(([,v])=>v>m);
+  let nextK,nextM;
+  if(ev.length){[nextK,nextM]=ev[0]}else{nextK="fajr";nextM=D.tn.fajr+1440}
+  // current prayer period
+  let cur=null;
+  if(m<t.fajr)cur="isha";else if(m<t.shuruq)cur="fajr";else if(m<t.dhuhr)cur=null;else if(m<t.asr)cur="dhuhr";else if(m<t.maghrib)cur="asr";else if(m<t.isha)cur="maghrib";else cur="isha";
+  for(const r of document.querySelectorAll("#prayerRows .row")){r.classList.toggle("cur",r.dataset.k===cur);r.classList.toggle("next",r.dataset.k===nextK)}
+  const secs=Math.max(0,Math.round((nextM-m)*60));
+  const hh=Math.floor(secs/3600),mm=Math.floor(secs%3600/60),ss=secs%60;
+  centerRefs.cs.textContent=L.untilFmt(nm(nextK),fmt(nextM));
+  centerRefs.cn.removeAttribute("style");centerRefs.cn.textContent=L.sub[nextK];
+  centerRefs.cc.textContent=`${hh}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")}`;
+  // states
+  const inK=D.ker.findIndex(([a,b])=>m>=a&&m<b);
+  const nights=[D.lastNight,D.tonight];
+  const afterMid=nights.some(x=>m>=x.mid&&m<x.end), inLast=nights.some(x=>m>=x.t2&&m<x.end);
+  let state="",col="";
+  if(inK>=0){state=L.stK;col="var(--kerahat)"}else if(inLast){state=L.stT+(afterMid?" · "+L.stM:"");col="var(--third)"}else if(afterMid){state=L.stM;col="var(--makruh)"}
+  centerRefs.st.textContent=state;centerRefs.st.setAttribute("style",`fill:${col||"var(--muted)"}`);
+  document.querySelectorAll("#kerRows .row").forEach((r,i)=>r.classList.toggle("active",i===inK));
+  const nr=document.querySelectorAll("#nightRows .row");
+  nr.forEach(r=>{r.classList.remove("active","activem");if(r.dataset.kind==="th"&&inLast)r.classList.add("active");if(r.dataset.kind==="mid"&&afterMid)r.classList.add("activem")});
+}
+
+let lastDay=null;
+setInterval(()=>{const td=todayInPlace();
+  if(lastDay&&!sameDay(td,lastDay)&&sameDay(viewDay,lastDay)){viewDay=td;render()} lastDay=td; tick()},1000);
+
+/* ---------- controls ---------- */
+function setLang(l){lang=l;store.set("lang",l);render()}
+document.getElementById("langDe").onclick=()=>setLang("de");
+document.getElementById("langTr").onclick=()=>setLang("tr");
+document.getElementById("prevDay").onclick=()=>{viewDay=addDays(viewDay,-1);render()};
+document.getElementById("nextDay").onclick=()=>{viewDay=addDays(viewDay,1);render()};
+document.getElementById("todayBtn").onclick=()=>{viewDay=todayInPlace();render()};
+document.getElementById("placeBtn").onclick=()=>{
+  if(!STANDALONE){document.getElementById("gpsBtn").click();return}
+  const pc=document.getElementById("placeCard");pc.hidden=!pc.hidden;
+  if(!pc.hidden)pc.scrollIntoView({behavior:"smooth",block:"start"});
+};
+document.getElementById("hijriSel").onchange=e=>{hijriOff=+e.target.value;store.set("hijriOff",hijriOff);render()};
+
+const sel=document.getElementById("citySel");
+function fillCities(){sel.innerHTML="";const o0=document.createElement("option");o0.value="";o0.textContent="—";sel.appendChild(o0);
+  CITIES.forEach((grp,gi)=>{const og=document.createElement("optgroup");og.label=grp.g;
+    grp.items.forEach((c,ci)=>{const o=document.createElement("option");o.value=gi+":"+ci;o.textContent=c[0];if(place.src==="city"&&place.name===c[0])o.selected=true;og.appendChild(o)});sel.appendChild(og)})}
+sel.onchange=()=>{if(!sel.value)return;const [gi,ci]=sel.value.split(":").map(Number);const c=CITIES[gi].items[ci];
+  setPlace({name:c[0],lat:c[1],lon:c[2],tz:c[3],src:"city"})};
+function setPlace(p){place=p;store.set("place",p);viewDay=todayInPlace();lastDay=viewDay;render()}
+
+function showMsg(id,text,err){const e=document.getElementById(id);e.hidden=!text;e.textContent=text||"";e.classList.toggle("err",!!err);
+  if(id==="gpsMsg"&&err){document.getElementById("placeCard").hidden=false;try{document.getElementById("placeCard").scrollIntoView({behavior:"smooth",block:"start"})}catch(x){}}}
+function nearestCity(lat,lon){let best=null,bd=1e9;
+  for(const g of CITIES)for(const c of g.items){const dy=(c[1]-lat)*111,dx=(c[2]-lon)*111*Math.cos(lat*RAD),d=Math.hypot(dx,dy);if(d<bd){bd=d;best=c[0]}}
+  return bd<=25?best.replace(" (Bezirk)",""):""}
+function locate(silent){
+  const msg=(t,e)=>{if(!silent)showMsg("gpsMsg",t,e)};
+  const L=T[lang];
+  if(!("geolocation" in navigator)){msg(L.gpsErr,true);return}
+  msg(L.gpsWait,false);
+  let done=false;const timer=setTimeout(()=>{if(!done){done=true;msg(L.gpsErr,true)}},12000);
+  try{navigator.geolocation.getCurrentPosition(pos=>{if(done)return;done=true;clearTimeout(timer);
+      const la=+pos.coords.latitude.toFixed(4),lo=+pos.coords.longitude.toFixed(4);setPlace({name:L.myPlace,lat:la,lon:lo,tz:DEVICE_TZ,src:"gps",near:nearestCity(la,lo)});
+      sel.value="";msg(T[lang].gpsOk,false)},
+    ()=>{if(done)return;done=true;clearTimeout(timer);msg(L.gpsErr,true)},{enableHighAccuracy:false,timeout:10000,maximumAge:600000})}
+  catch(e){done=true;clearTimeout(timer);msg(L.gpsErr,true)}
+}
+document.getElementById("gpsBtn").onclick=()=>locate(false);
+
+document.getElementById("openList").onclick=()=>showList(true);
+document.getElementById("closeList").onclick=()=>showList(false);
+
+/* ---------- start ---------- */
+fillCities();
+viewDay=todayInPlace();lastDay=viewDay;
+render();
+if(location.hash==="#tage")showList(true);
+if(STANDALONE){document.getElementById("placeCard").hidden=true;locate(true)}
+})();
+</script>
+
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>
+</body>
+</html>
