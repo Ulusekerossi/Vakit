@@ -29,6 +29,7 @@
   --makruh:#E0821F; --makruh-soft:#FCEBD7;
   --third:#2F45A8; --third-soft:#E1E6F8;
   --p-fajr:#B7C5E6; --p-duha:#E6EAF0; --p-dhuhr:#A6D8CC; --p-asr:#73B8A8; --p-maghrib:#4A8C89; --p-isha:#2D4E63; --p-night:#C9D1E3;
+  --kz-ok:#1E8A4C; --kz-ok-soft:#D5F0DE; --kz-part:#B07F00; --kz-part-soft:#FBEDBF; --kz-open:#C9372C; --kz-open-soft:#FADDDA;
   --font-display:"Marcellus","Iowan Old Style","Palatino Linotype",Georgia,serif;
   --font-body:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --font-ar:"Amiri","Geeza Pro","Times New Roman",serif;
@@ -41,6 +42,7 @@
   --makruh:#F4A04A; --makruh-soft:#3A2814;
   --third:#8395FA; --third-soft:#1E2550;
   --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772;
+  --kz-ok:#4CC77E; --kz-ok-soft:#163A25; --kz-part:#E9B93C; --kz-part-soft:#3A3013; --kz-open:#FF6B5F; --kz-open-soft:#3F1C1C;
   color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0C111D; --surface:#151C2C; --surface-2:#1B2336; --fg:#E7EBF3; --muted:#97A2B9; --line:#28324A;
@@ -49,6 +51,7 @@
   --makruh:#F4A04A; --makruh-soft:#3A2814;
   --third:#8395FA; --third-soft:#1E2550;
   --p-fajr:#3A4F86; --p-duha:#273047; --p-dhuhr:#2F8577; --p-asr:#276E63; --p-maghrib:#205955; --p-isha:#173A4C; --p-night:#3A4772;
+  --kz-ok:#4CC77E; --kz-ok-soft:#163A25; --kz-part:#E9B93C; --kz-part-soft:#3A3013; --kz-open:#FF6B5F; --kz-open-soft:#3F1C1C;
   color-scheme:dark}
 
 *,*::before,*::after{box-sizing:border-box}
@@ -178,7 +181,64 @@ button{cursor:pointer}
 .tbl tr.fri td{background:var(--surface-2)}
 .tbl tr.today td{background:var(--accent-soft)}
 .tbl tr.mon td{background:transparent;font-family:var(--font-display);font-size:15px;text-align:left;padding:14px 12px 6px;border-top:0;color:var(--fg)}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+.top .lang{margin-left:auto}
+
+/* kaza */
+.kz-top{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px 16px 10px}
+.kz-num b{display:block;font-size:22px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.kz-num span{font-size:12.5px;color:var(--muted)}
+.kz-num.ok b{color:var(--kz-ok)} .kz-num.op b{color:var(--kz-open)}
+.bar{height:10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--kz-ok)}
+.kz-barwrap{padding:0 16px 4px}
+.kz-years{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;padding:12px 16px 12px}
+.kz-yr{display:grid;grid-template-columns:34px 1fr 38px;align-items:center;gap:6px;font-size:12px;font-variant-numeric:tabular-nums}
+.kz-yr .bar{height:6px}
+.kz-yr em{font-style:normal;text-align:right;color:var(--muted)}
+.kz-proj{margin:0;padding:11px 16px 13px;border-top:1px solid var(--line);font-size:13.5px}
+.kz-proj b{font-weight:600}
+.kz-proj small{display:block;font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-bottom:2px}
+.kz-nav{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:12px 10px 10px}
+.kz-step{display:flex;align-items:center;gap:4px}
+.kz-step button{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);display:grid;place-items:center;padding:0}
+.kz-step button:disabled{opacity:.3;cursor:default}
+.kz-step b{text-align:center;font-weight:600;font-size:15.5px}
+#kzY{min-width:44px} #kzM{min-width:86px}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;padding:0 10px 4px}
+.cal .wd{text-align:center;font-size:11px;font-weight:700;color:var(--muted);padding:2px 0 3px}
+.cal .day{aspect-ratio:1/1;min-height:40px;border-radius:10px;border:1.5px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-weight:600;font-size:15px;font-variant-numeric:tabular-nums;padding:0;color:var(--fg)}
+.cal .s0{background:var(--kz-open-soft);border-color:var(--kz-open)}
+.cal .s1{background:var(--kz-part-soft);border-color:var(--kz-part)}
+.cal .s2{background:var(--kz-ok-soft);border-color:var(--kz-ok)}
+.cal .dots{display:flex;gap:2px;line-height:0}
+.cal .dots i{width:5px;height:5px;border-radius:50%;background:var(--fg);opacity:.18}
+.cal .dots i.on{opacity:.85}
+.sw.ok{background:var(--kz-ok)} .sw.pa{background:var(--kz-part)} .sw.op{background:var(--kz-open)}
+.kz-legend{padding:6px 10px 14px;margin:0}
+.kz-warn{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--makruh-soft);border:1px solid var(--makruh);border-radius:var(--r);padding:12px 14px;font-size:13.5px}
+.kz-warn b{display:block;font-weight:600}
+.kz-warn span{color:var(--muted);font-size:12.5px}
+.kz-warn .btn{flex:none}
+.kz-err{background:var(--kerahat-soft);border:1px solid var(--kerahat);border-radius:var(--r);padding:12px 14px}
+.kz-prev{border:1px solid var(--accent);background:var(--accent-soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.kz-prev b{font-weight:600}
+.kz-prev p{margin:0}
+.kz-file{position:fixed;left:0;top:0;width:1px;height:1px;max-width:1px;opacity:0;overflow:hidden;clip-path:inset(50%);pointer-events:none}
+.sheet-bg{position:fixed;inset:0;background:rgba(8,12,22,.45);z-index:20}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;max-width:520px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-bottom:0;border-radius:22px 22px 0 0;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));box-shadow:0 -10px 30px rgba(0,0,0,.18);animation:sheetUp .2s ease-out}
+@keyframes sheetUp{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.sheet h3{font-family:var(--font-display);font-weight:400;font-size:21px;margin:0;line-height:1.25}
+.sheet .shsub{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 12px}
+.tg button{min-height:66px;border-radius:14px;border:2px solid var(--line);background:var(--surface-2);display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;font-weight:600;font-size:17px;text-align:left}
+.tg button[aria-checked="true"]{background:var(--kz-ok-soft);border-color:var(--kz-ok)}
+.tg .ck{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--muted);display:grid;place-items:center;color:transparent}
+.tg button[aria-checked="true"] .ck{background:var(--kz-ok);border-color:var(--kz-ok);color:var(--surface)}
+.tg button:disabled{opacity:.5}
+.sheet .acts{display:flex;flex-direction:column;gap:8px}
+.sheet .acts .btn{padding:13px 12px;font-size:15px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 
 <div class="app">
@@ -214,6 +274,8 @@ button{cursor:pointer}
   </div>
 
   <button class="golist" id="openList" type="button"><span><span id="goListT"></span><small id="goListS"></small></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+
+  <button class="golist" id="openKaza" type="button"><span><span id="goKazaT"></span><small id="goKazaS"></small></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
 
   <section class="card">
     <h2><span id="hPrayers"></span><small id="hPrayersSub"></small></h2>
@@ -266,7 +328,65 @@ button{cursor:pointer}
     </section>
   </div>
 
+  <div id="kazaView" class="stack" hidden>
+    <div class="lhead">
+      <button class="nav" id="closeKaza" type="button" aria-label="Zurück" style="flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div><h1 id="kzTitle"></h1><p id="kzSub"></p></div>
+    </div>
+    <p class="msg err kz-err" id="kzErr" hidden></p>
+    <div class="kz-warn" id="kzWarn" hidden><div><b id="kzWarnT"></b><span id="kzWarnS"></span></div><button class="btn primary" type="button" id="kzWarnBtn"></button></div>
+    <section class="card">
+      <div class="kz-top">
+        <div class="kz-num ok"><b id="kzDone"></b><span id="kzDoneL"></span></div>
+        <div class="kz-num op"><b id="kzOpen"></b><span id="kzOpenL"></span></div>
+        <div class="kz-num"><b id="kzPct"></b><span id="kzPctL"></span></div>
+      </div>
+      <div class="kz-barwrap"><div class="bar"><i id="kzBar"></i></div></div>
+      <div class="kz-years" id="kzYears"></div>
+      <p class="kz-proj" id="kzProj"></p>
+    </section>
+    <section class="card">
+      <div class="kz-nav">
+        <div class="kz-step"><button type="button" id="kzPrevY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="kzY"></b><button type="button" id="kzNextY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div>
+        <div class="kz-step"><button type="button" id="kzPrevM"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="kzM"></b><button type="button" id="kzNextM"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div>
+      </div>
+      <div class="cal" id="kzCal"></div>
+      <div class="legend kz-legend">
+        <span><i class="sw ok"></i><em id="kzLgOk" style="font-style:normal"></em></span>
+        <span><i class="sw pa"></i><em id="kzLgPa" style="font-style:normal"></em></span>
+        <span><i class="sw op"></i><em id="kzLgOp" style="font-style:normal"></em></span>
+      </div>
+    </section>
+    <section class="card">
+      <h2><span id="kzBakH"></span></h2>
+      <div class="set">
+        <div class="two"><button class="btn primary" type="button" id="kzSave"></button><button class="btn" type="button" id="kzLoad"></button></div>
+        <input type="file" id="kzFile" class="kz-file" tabindex="-1" aria-hidden="true">
+        <p class="msg" id="kzBakMsg" hidden></p>
+        <div class="kz-prev" id="kzPrev" hidden>
+          <p><b id="kzPrevH"></b></p>
+          <p id="kzPrevFile"></p>
+          <p id="kzPrevNow"></p>
+          <p class="msg" id="kzPrevWarn"></p>
+          <div class="two"><button class="btn primary" type="button" id="kzPrevOk"></button><button class="btn" type="button" id="kzPrevNo"></button></div>
+        </div>
+        <p class="msg" id="kzBakInfo"></p>
+        <p class="msg" id="kzBakHint"></p>
+      </div>
+    </section>
+  </div>
+
   <p class="foot" id="foot"></p>
+</div>
+
+<div class="sheet-bg" id="kzSheetBg" hidden></div>
+<div class="sheet" id="kzSheet" role="dialog" aria-modal="true" aria-labelledby="kzShDate" hidden>
+  <div class="grab"></div>
+  <h3 id="kzShDate"></h3>
+  <p class="shsub" id="kzShSub"></p>
+  <div class="tg" id="kzToggles"></div>
+  <p class="msg err" id="kzShMsg" hidden></p>
+  <div class="acts"><button class="btn primary" type="button" id="kzAllDay"></button><button class="btn" type="button" id="kzShClose"></button></div>
 </div>
 
 <script>
@@ -326,6 +446,25 @@ const T={
   goListT:"Nächste 45 Tage",goListS:"Alle Gebetszeiten und Tageslänge als Liste",
   lTitle:"Die nächsten 45 Tage",lenH:"Tageslänge",lenSub:"Sonnenaufgang bis Sonnenuntergang",dayCol:"Tag",
   lenSum:(a,b,d,per)=>`Von <b>${a}</b> auf <b>${b}</b>, die Tage werden ${d<0?"kürzer":"länger"}, insgesamt <b>${d<0?"−":"+"}${Math.abs(d)} min</b> (im Schnitt ${per} min pro Tag).`,
+  kz:{go:"Kaza",goSub:(d,t,p)=>`Erledigt ${d} von ${t} · ${p}`,title:"Kaza",sub:"Nachzuholende Gebete 01.01.2022 – 31.12.2031",
+   done:"Erledigt",open:"Offen",prog:"Fortschritt",projH:"Hochrechnung",
+   few:n=>`Noch zu wenig Daten. Die Hochrechnung beginnt, sobald du an 7 verschiedenen Tagen abgehakt hast (bisher ${n}).`,
+   proj:(r,dt)=>`Im Schnitt <b>${r}</b> Gebete pro Tag (letzte 30 Tage), voraussichtlich fertig am <b>${dt}</b>.`,
+   all:"Alle Kaza-Gebete sind erledigt.",
+   lgOk:"alle 4 erledigt",lgPa:"teilweise erledigt",lgOp:"noch nichts erledigt",
+   prevY:"Vorheriges Jahr",nextY:"Nächstes Jahr",prevM:"Vorheriger Monat",nextM:"Nächster Monat",
+   allDay:"Ganzer Tag erledigt",close:"Schließen",dayOf:n=>`${n} von 4 erledigt`,
+   bak:"Sicherung",save:"Sicherung speichern",load:"Sicherung laden",
+   bakInfo:d=>d?`Letzte Sicherung: ${d}`:"Noch keine Sicherung gemacht.",
+   bakHint:"Auf dem iPhone im Teilen-Menü „In Dateien sichern“ wählen, zum Beispiel in iCloud Drive.",
+   warnNever:"Noch keine Sicherung deiner Kaza-Daten",warnOld:n=>`Letzte Sicherung vor ${n} Tagen`,warnSub:"Die Daten liegen nur auf diesem Gerät.",warnBtn:"Jetzt sichern",
+   saved:"Sicherung gespeichert.",cancelled:"Sicherung abgebrochen.",bad:"Diese Datei ist keine gültige Kaza-Sicherung.",
+   prevH:"Diese Sicherung übernehmen?",prevFile:(dt,d,o,p)=>`<b>Sicherung vom ${dt}:</b> erledigt ${d}, offen ${o} (${p})`,
+   prevNow:(d,o,p)=>`<b>Jetzt in der App:</b> erledigt ${d}, offen ${o} (${p})`,
+   prevWarn:"Die Kaza-Daten in der App werden dabei vollständig durch die Sicherung ersetzt.",apply:"Übernehmen",cancel:"Abbrechen",
+   loaded:"Sicherung übernommen.",unknown:"unbekanntem Datum",
+   saveErr:"Speichern nicht möglich. Bitte erstelle eine Sicherung und prüfe den Speicherplatz.",
+   broken:"Die gespeicherten Kaza-Daten konnten nicht gelesen werden. Es wurde nichts verändert. Bitte lade eine Sicherung."},
   hm:["Muharram","Safar","Rabi al-Awwal","Rabi al-Thani","Jumada al-Ula","Jumada al-Akhira","Radschab","Schaban","Ramadan","Schawwal","Dhu l-Qada","Dhu l-Hiddscha"]},
  tr:{loc:"tr-TR",prayers:"Namaz vakitleri",prayersSub:"Muslim World League",kerahat:"Kerahat vakitleri",kerahatSub:"her biri 45 dakika",
   night:"Gece",nightSub:"Akşamdan sabaha",place:"Konum",settings:"Ayarlar",
@@ -348,6 +487,25 @@ const T={
   lTitle:"Önümüzdeki 45 gün",lenH:"Gün uzunluğu",lenSub:"Güneş doğuşundan batışına",dayCol:"Gün",
   lenSum:(a,b,d,per)=>`<b>${a}</b> süreden <b>${b}</b> süreye, günler ${d<0?"kısalıyor":"uzuyor"}, toplam <b>${d<0?"−":"+"}${Math.abs(d)} dk</b> (günde ortalama ${per} dk).`,
   name:{fajr:"İmsak",shuruq:"Güneş",dhuhr:"Öğle",asr:"İkindi",maghrib:"Akşam",isha:"Yatsı"},
+  kz:{go:"Kaza namazları",goSub:(d,t,p)=>`${t} vakitten ${d} kılındı · ${p}`,title:"Kaza namazları",sub:"Kaza edilecek namazlar 01.01.2022 – 31.12.2031",
+   done:"Kılındı",open:"Kalan",prog:"İlerleme",projH:"Tahmin",
+   few:n=>`Henüz yeterli veri yok. Tahmin, 7 farklı günde işaretleme yaptıktan sonra başlar (şimdiye kadar ${n}).`,
+   proj:(r,dt)=>`Günde ortalama <b>${r}</b> namaz (son 30 gün), tahmini bitiş: <b>${dt}</b>.`,
+   all:"Tüm kaza namazları kılındı.",
+   lgOk:"4 vakit kılındı",lgPa:"kısmen kılındı",lgOp:"henüz kılınmadı",
+   prevY:"Önceki yıl",nextY:"Sonraki yıl",prevM:"Önceki ay",nextM:"Sonraki ay",
+   allDay:"Bütün gün kılındı",close:"Kapat",dayOf:n=>`4 vakitten ${n} kılındı`,
+   bak:"Yedekleme",save:"Yedeği kaydet",load:"Yedeği yükle",
+   bakInfo:d=>d?`Son yedek: ${d}`:"Henüz yedek alınmadı.",
+   bakHint:"iPhone'da paylaş menüsünde „Dosyalar'a Kaydet“i seç, örneğin iCloud Drive.",
+   warnNever:"Kaza verilerinin henüz yedeği yok",warnOld:n=>`Son yedek ${n} gün önce alındı`,warnSub:"Veriler yalnızca bu cihazda duruyor.",warnBtn:"Şimdi yedekle",
+   saved:"Yedek kaydedildi.",cancelled:"Yedekleme iptal edildi.",bad:"Bu dosya geçerli bir kaza yedeği değil.",
+   prevH:"Bu yedek yüklensin mi?",prevFile:(dt,d,o,p)=>`<b>${dt} tarihli yedek:</b> kılınan ${d}, kalan ${o} (${p})`,
+   prevNow:(d,o,p)=>`<b>Şu an uygulamada:</b> kılınan ${d}, kalan ${o} (${p})`,
+   prevWarn:"Uygulamadaki kaza verileri tamamen yedektekilerle değiştirilecek.",apply:"Yükle",cancel:"Vazgeç",
+   loaded:"Yedek yüklendi.",unknown:"bilinmeyen tarih",
+   saveErr:"Kaydedilemedi. Lütfen bir yedek al ve depolama alanını kontrol et.",
+   broken:"Kayıtlı kaza verileri okunamadı. Hiçbir şey değiştirilmedi. Lütfen bir yedek yükle."},
   hm:["Muharrem","Safer","Rebiülevvel","Rebiülahir","Cemaziyelevvel","Cemaziyelahir","Recep","Şaban","Ramazan","Şevval","Zilkade","Zilhicce"]}
 };
 let lang=store.get("lang","de"); if(!T[lang]) lang="de";
@@ -530,6 +688,8 @@ function render(){
   drawRing(viewDay,D);
   rows(D);
   if(!document.getElementById("listView").hidden) renderList();
+  kzMainButton();
+  if(!document.getElementById("kazaView").hidden) renderKaza();
   tick();
 }
 
@@ -579,12 +739,18 @@ function renderList(){
   document.getElementById("lenSum").innerHTML=L.lenSum(hm(lens[0]),hm(lens[DAYS-1]),tot,(Math.abs(tot)/(DAYS-1)).toFixed(1).replace(".",lang==="de"?",":","));
 }
 function hijriShort(day){const s=hijriText(day);return s}
-function showList(on){
-  document.getElementById("listView").hidden=!on;document.getElementById("mainView").hidden=on;
-  try{history.replaceState(null,"",on?"#tage":"#")}catch(e){}
-  if(on)renderList();
+function showView(v){
+  document.getElementById("mainView").hidden=v!=="main";
+  document.getElementById("listView").hidden=v!=="list";
+  document.getElementById("kazaView").hidden=v!=="kaza";
+  document.getElementById("placeBtn").hidden=v==="kaza";
+  document.getElementById("foot").hidden=v==="kaza";
+  try{history.replaceState(null,"",v==="list"?"#tage":v==="kaza"?"#kaza":"#")}catch(e){}
+  if(v==="list")renderList();
+  if(v==="kaza"){kzJumpToOpen();renderKaza()}else kzCloseSheet();
   window.scrollTo(0,0);
 }
+function showList(on){showView(on?"list":"main")}
 
 function tick(){
   if(!D)return;
@@ -676,11 +842,218 @@ document.getElementById("gpsBtn").onclick=()=>locate(false);
 document.getElementById("openList").onclick=()=>showList(true);
 document.getElementById("closeList").onclick=()=>showList(false);
 
+/* ---------- Kaza tracker ----------
+   One hex digit per day from 01.01.2022 to 31.12.2031, bits: 1 Dhuhr, 2 Asr, 4 Maghrib, 8 Isha.
+   The log counts ticks per real (device) date for the projection. Stored data is never reset automatically. */
+const KZ_START=Date.UTC(2022,0,1), KZ_DAYS=3652, KZ_FIRST_Y=2022, KZ_LAST_Y=2031;
+const KZ_KEYS=["dhuhr","asr","maghrib","isha"], KZ_BIT={dhuhr:1,asr:2,maghrib:4,isha:8};
+const KZ_LS={days:"vakit.kaza.days",log:"vakit.kaza.log",bak:"vakit.kaza.backup"};
+const POPC=[0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4];
+const pad2=n=>String(n).padStart(2,"0");
+const kzIdx=(y,m,d)=>Math.round((Date.UTC(y,m-1,d)-KZ_START)/864e5);
+const kzDate=i=>{const t=new Date(KZ_START+i*864e5);return {y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate()}};
+const isoDay=d=>`${d.y}-${pad2(d.m)}-${pad2(d.d)}`;
+function deviceToday(){const n=new Date();return {y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate()}}
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return localStorage.getItem(k)===v}catch(e){return false}}
+const kzValidDays=s=>typeof s==="string"&&s.length===KZ_DAYS&&/^[0-9a-f]+$/.test(s);
+const kzEncode=a=>Array.from(a,v=>v.toString(16)).join("");
+const kzDecode=s=>Uint8Array.from(s,c=>parseInt(c,16));
+function kzCleanLog(o){const out={};if(o&&typeof o==="object"&&!Array.isArray(o))
+  for(const k in o){const v=o[k];if(/^\d{4}-\d\d-\d\d$/.test(k)&&Number.isInteger(v)&&v!==0)out[k]=v}return out}
+function kzInitial(){const a=new Uint8Array(KZ_DAYS),last=kzIdx(2026,12,4);
+  for(let i=0;i<=last;i++)a[i]=15;a[last+1]=KZ_BIT.dhuhr|KZ_BIT.asr;return a}
+
+let kz=null,kzLog={},kzState="ok"; // ok | nostore (saving fails) | broken (stored data unreadable, left untouched)
+function kzLoad(){
+  const raw=lsGet(KZ_LS.days);
+  if(raw==null){kz=kzInitial();kzState=lsSet(KZ_LS.days,kzEncode(kz))?"ok":"nostore"}
+  else if(kzValidDays(raw)){kz=kzDecode(raw);kzState="ok"}
+  else{kz=new Uint8Array(KZ_DAYS);kzState="broken"}
+  try{kzLog=kzCleanLog(JSON.parse(lsGet(KZ_LS.log)||"{}"))}catch(e){kzLog={}}
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
+}
+function kzSave(){
+  if(kzState==="broken")return false;
+  const ok=lsSet(KZ_LS.days,kzEncode(kz))&&lsSet(KZ_LS.log,JSON.stringify(kzLog));
+  kzState=ok?"ok":"nostore";return ok;
+}
+function kzCount(a){
+  let done=0;const years=[];
+  for(let y=KZ_FIRST_Y;y<=KZ_LAST_Y;y++){const i0=kzIdx(y,1,1),i1=kzIdx(y+1,1,1);let d=0;
+    for(let i=i0;i<i1;i++)d+=POPC[a[i]];years.push({y,done:d,total:(i1-i0)*4});done+=d}
+  return {done,total:KZ_DAYS*4,open:KZ_DAYS*4-done,years};
+}
+const kzLoc=()=>lang==="tr"?"tr-TR":"de-DE";
+const kzN=n=>new Intl.NumberFormat(kzLoc()).format(n);
+function kzPct(done,total,dec){let p=total?done/total*100:0;if(done<total)p=Math.min(p,dec?99.9:99);
+  const s=new Intl.NumberFormat(kzLoc(),{minimumFractionDigits:dec,maximumFractionDigits:dec}).format(p);return lang==="tr"?"%"+s:s+" %"}
+function kzFmtDate(t,opt){return new Intl.DateTimeFormat(T[lang].loc,Object.assign({day:"numeric",month:"long",year:"numeric",timeZone:"UTC"},opt||{})).format(t)}
+
+/* projection: ticks of the last 30 days (or since the first tick, if that is more recent) */
+function kzProjection(open){
+  if(open===0)return {all:true};
+  const td=deviceToday(),t0=Date.UTC(td.y,td.m-1,td.d);
+  const days=Object.keys(kzLog).filter(k=>kzLog[k]>0).sort();
+  if(days.length<7)return {few:days.length};
+  const first=Date.parse(days[0]+"T00:00:00Z");
+  const span=Math.max(1,Math.min(30,Math.round((t0-first)/864e5)+1));
+  let sum=0;for(let j=0;j<span;j++){const t=new Date(t0-j*864e5);sum+=kzLog[isoDay({y:t.getUTCFullYear(),m:t.getUTCMonth()+1,d:t.getUTCDate()})]||0}
+  if(sum<=0)return {few:days.length};
+  const rate=sum/span;
+  return {rate,finish:new Date(t0+Math.ceil(open/rate)*864e5)};
+}
+
+let kzY=2026,kzM=12,kzOpenDay=-1;
+function kzJumpToOpen(){let i=kz.findIndex(v=>v!==15);if(i<0)i=KZ_DAYS-1;const d=kzDate(i);kzY=d.y;kzM=d.m}
+function kzMainButton(){
+  const K=T[lang].kz,c=kzCount(kz);
+  document.getElementById("goKazaT").textContent=K.go;
+  document.getElementById("goKazaS").textContent=kzState==="broken"?K.broken:K.goSub(kzN(c.done),kzN(c.total),kzPct(c.done,c.total,1));
+}
+function kzDaysSince(iso){const t=Date.parse(iso+"T00:00:00Z");if(isNaN(t))return null;const td=deviceToday();return Math.round((Date.UTC(td.y,td.m-1,td.d)-t)/864e5)}
+
+function renderKaza(){
+  const L=T[lang],K=L.kz,$=id=>document.getElementById(id);
+  const txt={kzTitle:K.title,kzSub:K.sub,kzDoneL:K.done,kzOpenL:K.open,kzPctL:K.prog,kzLgOk:K.lgOk,kzLgPa:K.lgPa,kzLgOp:K.lgOp,
+    kzBakH:K.bak,kzSave:K.save,kzLoad:K.load,kzBakHint:K.bakHint,kzWarnBtn:K.warnBtn,kzWarnS:K.warnSub,kzPrevH:K.prevH,kzPrevWarn:K.prevWarn,
+    kzPrevOk:K.apply,kzPrevNo:K.cancel,kzAllDay:K.allDay,kzShClose:K.close};
+  for(const id in txt)$(id).textContent=txt[id];
+  $("closeKaza").setAttribute("aria-label",lang==="tr"?"Geri":"Zurück");
+  [["kzPrevY",K.prevY],["kzNextY",K.nextY],["kzPrevM",K.prevM],["kzNextM",K.nextM]].forEach(([id,t])=>$(id).setAttribute("aria-label",t));
+  // problems with the stored data
+  const err=kzState==="broken"?K.broken:kzState==="nostore"?K.saveErr:"";
+  $("kzErr").hidden=!err;$("kzErr").textContent=err;
+  // backup reminder
+  const bak=lsGet(KZ_LS.bak),since=bak?kzDaysSince(bak):null;
+  const warn=kzState!=="broken"&&(since==null||since>14);
+  $("kzWarn").hidden=!warn;
+  if(warn)$("kzWarnT").textContent=since==null?K.warnNever:K.warnOld(since);
+  $("kzBakInfo").textContent=K.bakInfo(since==null?"":kzFmtDate(new Date(Date.parse(bak+"T00:00:00Z"))));
+  $("kzSave").disabled=kzState==="broken";
+  // summary
+  const c=kzCount(kz);
+  $("kzDone").textContent=kzN(c.done);$("kzOpen").textContent=kzN(c.open);$("kzPct").textContent=kzPct(c.done,c.total,1);
+  $("kzBar").style.width=(c.done/c.total*100)+"%";
+  $("kzYears").innerHTML=c.years.map(y=>`<div class="kz-yr"><span>${y.y}</span><div class="bar"><i style="width:${(y.done/y.total*100).toFixed(2)}%"></i></div><em>${kzPct(y.done,y.total,0)}</em></div>`).join("");
+  const pr=kzProjection(c.open),nf1=new Intl.NumberFormat(kzLoc(),{minimumFractionDigits:1,maximumFractionDigits:1});
+  $("kzProj").innerHTML=`<small>${K.projH}</small>`+(pr.all?K.all:pr.few!=null?K.few(pr.few):K.proj(nf1.format(pr.rate),kzFmtDate(pr.finish)));
+  kzRenderCal();
+  if(kzOpenDay>=0)kzRenderSheet();
+  if(kzPending)kzShowPreview(false);
+  kzShowMsg();
+}
+
+function kzRenderCal(){
+  const L=T[lang],K=L.kz,$=id=>document.getElementById(id);
+  $("kzY").textContent=kzY;
+  $("kzM").textContent=new Intl.DateTimeFormat(L.loc,{month:"long",timeZone:"UTC"}).format(new Date(Date.UTC(kzY,kzM-1,15)));
+  $("kzPrevY").disabled=kzY<=KZ_FIRST_Y;$("kzNextY").disabled=kzY>=KZ_LAST_Y;
+  $("kzPrevM").disabled=kzY<=KZ_FIRST_Y&&kzM===1;$("kzNextM").disabled=kzY>=KZ_LAST_Y&&kzM===12;
+  const wdF=new Intl.DateTimeFormat(L.loc,{weekday:"short",timeZone:"UTC"});
+  let h="";
+  for(let i=0;i<7;i++)h+=`<div class="wd">${wdF.format(new Date(Date.UTC(2024,0,1+i))).replace(".","")}</div>`; // 01.01.2024 was a Monday
+  const lead=(new Date(Date.UTC(kzY,kzM-1,1)).getUTCDay()+6)%7, n=new Date(Date.UTC(kzY,kzM,0)).getUTCDate();
+  for(let i=0;i<lead;i++)h+="<div></div>";
+  const dF=new Intl.DateTimeFormat(L.loc,{day:"numeric",month:"long",timeZone:"UTC"});
+  for(let d=1;d<=n;d++){const i=kzIdx(kzY,kzM,d),v=kz[i],cnt=POPC[v],st=cnt===4?2:cnt>0?1:0;
+    const dots=KZ_KEYS.map(k=>`<i${v&KZ_BIT[k]?' class="on"':""}></i>`).join("");
+    h+=`<button type="button" class="day s${st}" data-i="${i}" aria-label="${dF.format(new Date(Date.UTC(kzY,kzM-1,d)))}: ${K.dayOf(cnt)}"><span>${d}</span><span class="dots">${dots}</span></button>`}
+  $("kzCal").innerHTML=h;
+}
+
+/* bottom sheet for one day */
+function kzRenderSheet(){
+  const L=T[lang],K=L.kz,i=kzOpenDay,v=kz[i],d=kzDate(i),$=id=>document.getElementById(id);
+  $("kzShDate").textContent=kzFmtDate(new Date(Date.UTC(d.y,d.m-1,d.d)),{weekday:"long"});
+  $("kzShSub").textContent=K.dayOf(POPC[v]);
+  const ck='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  $("kzToggles").innerHTML=KZ_KEYS.map(k=>`<button type="button" role="switch" data-k="${k}" aria-checked="${!!(v&KZ_BIT[k])}"${kzState==="broken"?" disabled":""}><span>${nm(k)}</span><span class="ck">${ck}</span></button>`).join("");
+  $("kzAllDay").disabled=kzState==="broken"||v===15;
+}
+function kzOpenSheet(i){kzOpenDay=i;document.getElementById("kzShMsg").hidden=true;kzRenderSheet();
+  document.getElementById("kzSheetBg").hidden=false;document.getElementById("kzSheet").hidden=false}
+function kzCloseSheet(){kzOpenDay=-1;document.getElementById("kzSheetBg").hidden=true;document.getElementById("kzSheet").hidden=true}
+function kzSetDay(i,mask){
+  if(kzState==="broken"||mask===kz[i])return;
+  const delta=POPC[mask]-POPC[kz[i]],key=isoDay(deviceToday());
+  kz[i]=mask;kzLog[key]=(kzLog[key]||0)+delta;if(!kzLog[key])delete kzLog[key];
+  const ok=kzSave(),m=document.getElementById("kzShMsg");m.hidden=ok;m.textContent=ok?"":T[lang].kz.saveErr;
+  renderKaza();kzMainButton();
+}
+
+/* backup */
+let kzMsg=null; // key into T[lang].kz, re-translated on language switch
+function kzBakMsg(key,err){kzMsg=key?{key,err:!!err}:null;kzShowMsg()}
+function kzShowMsg(){const e=document.getElementById("kzBakMsg");e.hidden=!kzMsg;e.textContent=kzMsg?T[lang].kz[kzMsg.key]:"";e.classList.toggle("err",!!(kzMsg&&kzMsg.err))}
+function kzMarkBackup(){lsSet(KZ_LS.bak,isoDay(deviceToday()))}
+async function kzExport(){
+  const K=T[lang].kz;if(kzState==="broken")return;
+  const name=`vakit-kaza-${isoDay(deviceToday())}.json`;
+  const data={app:"Vakit Ring",type:"kaza",version:1,created:new Date().toISOString(),start:"2022-01-01",end:"2031-12-31",
+    prayers:KZ_KEYS,encoding:"one hex digit per day; 1 dhuhr, 2 asr, 4 maghrib, 8 isha",days:kzEncode(kz),log:kzLog};
+  const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+  let file=null;try{file=new File([blob],name,{type:"application/json"})}catch(e){}
+  const done=()=>{kzMarkBackup();kzBakMsg("saved",false);renderKaza()};
+  if(file&&navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+    try{await navigator.share({files:[file],title:name});done();return}
+    catch(e){if(e&&e.name==="AbortError"){kzBakMsg("cancelled",false);return}}
+  }
+  try{const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),10000);done()}catch(e){kzBakMsg("saveErr",true)}
+}
+let kzPending=null;
+function kzReadFile(f){
+  const K=T[lang].kz;kzBakMsg(null);kzPending=null;document.getElementById("kzPrev").hidden=true;
+  if(!f)return;if(f.size>2e6){kzBakMsg("bad",true);return}
+  const r=new FileReader();
+  r.onload=()=>{let o=null;try{o=JSON.parse(String(r.result))}catch(e){}
+    if(!o||o.type!=="kaza"||o.start!=="2022-01-01"||!kzValidDays(o.days)){kzBakMsg("bad",true);return}
+    kzPending={days:kzDecode(o.days),log:kzCleanLog(o.log),created:Date.parse(o.created)};kzShowPreview(true)};
+  r.onerror=()=>kzBakMsg("bad",true);
+  r.readAsText(f);
+}
+function kzShowPreview(scroll){
+  if(!kzPending)return;
+  const K=T[lang].kz,f=kzCount(kzPending.days),c=kzCount(kz);
+  const dt=isNaN(kzPending.created)?K.unknown:new Intl.DateTimeFormat(T[lang].loc,{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(new Date(kzPending.created));
+  document.getElementById("kzPrevFile").innerHTML=K.prevFile(dt,kzN(f.done),kzN(f.open),kzPct(f.done,f.total,1));
+  document.getElementById("kzPrevNow").innerHTML=K.prevNow(kzN(c.done),kzN(c.open),kzPct(c.done,c.total,1));
+  const box=document.getElementById("kzPrev");box.hidden=false;if(scroll)box.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function kzApplyPending(){
+  if(!kzPending)return;const K=T[lang].kz;
+  kz=kzPending.days;kzLog=kzPending.log;kzPending=null;kzState="ok";
+  const ok=kzSave();document.getElementById("kzPrev").hidden=true;
+  kzBakMsg(ok?"loaded":"saveErr",!ok);kzJumpToOpen();renderKaza();kzMainButton();
+}
+
+document.getElementById("openKaza").onclick=()=>showView("kaza");
+document.getElementById("closeKaza").onclick=()=>showView("main");
+document.getElementById("kzPrevY").onclick=()=>{if(kzY>KZ_FIRST_Y){kzY--;kzRenderCal()}};
+document.getElementById("kzNextY").onclick=()=>{if(kzY<KZ_LAST_Y){kzY++;kzRenderCal()}};
+document.getElementById("kzPrevM").onclick=()=>{if(kzM>1)kzM--;else if(kzY>KZ_FIRST_Y){kzM=12;kzY--}kzRenderCal()};
+document.getElementById("kzNextM").onclick=()=>{if(kzM<12)kzM++;else if(kzY<KZ_LAST_Y){kzM=1;kzY++}kzRenderCal()};
+document.getElementById("kzCal").onclick=e=>{const b=e.target.closest("button.day");if(b)kzOpenSheet(+b.dataset.i)};
+document.getElementById("kzToggles").onclick=e=>{const b=e.target.closest("button[data-k]");if(!b||kzOpenDay<0)return;kzSetDay(kzOpenDay,kz[kzOpenDay]^KZ_BIT[b.dataset.k])};
+document.getElementById("kzAllDay").onclick=()=>{if(kzOpenDay>=0)kzSetDay(kzOpenDay,15)};
+document.getElementById("kzShClose").onclick=kzCloseSheet;
+document.getElementById("kzSheetBg").onclick=kzCloseSheet;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&kzOpenDay>=0)kzCloseSheet()});
+document.getElementById("kzSave").onclick=kzExport;
+document.getElementById("kzWarnBtn").onclick=kzExport;
+document.getElementById("kzLoad").onclick=()=>document.getElementById("kzFile").click();
+document.getElementById("kzFile").onchange=e=>{const f=e.target.files&&e.target.files[0];kzReadFile(f);e.target.value=""};
+document.getElementById("kzPrevOk").onclick=kzApplyPending;
+document.getElementById("kzPrevNo").onclick=()=>{kzPending=null;document.getElementById("kzPrev").hidden=true};
+
 /* ---------- start ---------- */
+kzLoad();
 fillCities();
 viewDay=todayInPlace();lastDay=viewDay;
 render();
 if(location.hash==="#tage")showList(true);
+if(location.hash==="#kaza")showView("kaza");
 if(STANDALONE){document.getElementById("placeCard").hidden=true;locate(true)}
 })();
 </script>
