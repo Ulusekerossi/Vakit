@@ -13,7 +13,7 @@
 <link rel="icon" type="image/png" href="icon-180.png">
 <link rel="manifest" href="manifest.webmanifest">
 <style>:root{color-scheme:light dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
-<script>window.VAKIT_STANDALONE=true;</script>
+<script>window.VAKIT_STANDALONE=true;try{var vt=JSON.parse(localStorage.getItem("vakit.theme"));if(vt==="light"||vt==="dark")document.documentElement.setAttribute("data-theme",vt)}catch(e){}</script>
 <title>Vakit Ring</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -304,6 +304,9 @@ button{cursor:pointer}
   <section class="card">
     <h2><span id="hSettings"></span></h2>
     <div class="set">
+      <label><span id="lTheme"></span>
+        <select id="themeSel"><option value="auto"></option><option value="light"></option><option value="dark"></option></select>
+      </label>
       <p class="meta" id="methodMeta"></p>
       <label><span id="lHijri"></span>
         <select id="hijriSel"><option value="-1">−1</option><option value="0">0</option><option value="1">+1</option></select>
@@ -334,17 +337,6 @@ button{cursor:pointer}
       <div><h1 id="kzTitle"></h1><p id="kzSub"></p></div>
     </div>
     <p class="msg err kz-err" id="kzErr" hidden></p>
-    <div class="kz-warn" id="kzWarn" hidden><div><b id="kzWarnT"></b><span id="kzWarnS"></span></div><button class="btn primary" type="button" id="kzWarnBtn"></button></div>
-    <section class="card">
-      <div class="kz-top">
-        <div class="kz-num ok"><b id="kzDone"></b><span id="kzDoneL"></span></div>
-        <div class="kz-num op"><b id="kzOpen"></b><span id="kzOpenL"></span></div>
-        <div class="kz-num"><b id="kzPct"></b><span id="kzPctL"></span></div>
-      </div>
-      <div class="kz-barwrap"><div class="bar"><i id="kzBar"></i></div></div>
-      <div class="kz-years" id="kzYears"></div>
-      <p class="kz-proj" id="kzProj"></p>
-    </section>
     <section class="card">
       <div class="kz-nav">
         <div class="kz-step"><button type="button" id="kzPrevY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="kzY"></b><button type="button" id="kzNextY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div>
@@ -356,6 +348,17 @@ button{cursor:pointer}
         <span><i class="sw pa"></i><em id="kzLgPa" style="font-style:normal"></em></span>
         <span><i class="sw op"></i><em id="kzLgOp" style="font-style:normal"></em></span>
       </div>
+    </section>
+    <div class="kz-warn" id="kzWarn" hidden><div><b id="kzWarnT"></b><span id="kzWarnS"></span></div><button class="btn primary" type="button" id="kzWarnBtn"></button></div>
+    <section class="card">
+      <div class="kz-top">
+        <div class="kz-num ok"><b id="kzDone"></b><span id="kzDoneL"></span></div>
+        <div class="kz-num op"><b id="kzOpen"></b><span id="kzOpenL"></span></div>
+        <div class="kz-num"><b id="kzPct"></b><span id="kzPctL"></span></div>
+      </div>
+      <div class="kz-barwrap"><div class="bar"><i id="kzBar"></i></div></div>
+      <div class="kz-years" id="kzYears"></div>
+      <p class="kz-proj" id="kzProj"></p>
     </section>
     <section class="card">
       <h2><span id="kzBakH"></span></h2>
@@ -440,7 +443,7 @@ const T={
   gpsErr:"Der Standort ist in dieser Ansicht nicht verfügbar. Wähle deine Stadt aus der Liste.",
   gpsOk:"Standort übernommen.",city:"Ort aus der Liste",lat:"Breitengrad",lon:"Längengrad",apply:"Koordinaten übernehmen",
   coordErr:"Bitte gültige Zahlen eingeben, zum Beispiel 47.24 und 11.09.",myPlace:"Mein Standort",manual:"Eigene Koordinaten",
-  hijri:"Hidschri-Datum korrigieren (Tage)",
+  hijri:"Hidschri-Datum korrigieren (Tage)",theme:"Darstellung",themeOpts:["Automatisch (wie das iPhone)","Hell","Dunkel"],
   method:(o)=>`<b>Berechnung:</b> Muslim World League (Fajr 18°, Isha 17°), Asr nach Schafi'i, keine Hochbreiten-Korrektur.<br><b>Korrekturen:</b> Fajr ${o.fajr}, Shuruq ${o.shuruq}, Dhuhr +${o.dhuhr}, Asr +${o.asr}, Maghrib +${o.maghrib}, Isha ${o.isha} Minuten.<br><b>Kerahat und Nacht</b> werden von den angezeigten Zeiten aus berechnet.`,
   fb:"* Hochbreiten-Ersatzwert",foot:(p)=>`${p.name} · ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)} · ${p.tz}`,
   goListT:"Nächste 45 Tage",goListS:"Alle Gebetszeiten und Tageslänge als Liste",
@@ -480,7 +483,7 @@ const T={
   gpsErr:"Bu görünümde konum kullanılamıyor. Listeden şehrini seç.",
   gpsOk:"Konum alındı.",city:"Listeden yer",lat:"Enlem",lon:"Boylam",apply:"Koordinatları uygula",
   coordErr:"Lütfen geçerli sayılar gir, örneğin 47.24 ve 11.09.",myPlace:"Konumum",manual:"Kendi koordinatlarım",
-  hijri:"Hicri tarihi düzelt (gün)",
+  hijri:"Hicri tarihi düzelt (gün)",theme:"Görünüm",themeOpts:["Otomatik (iPhone gibi)","Açık","Koyu"],
   method:(o)=>`<b>Hesaplama:</b> Muslim World League (Sabah 18°, Yatsı 17°), İkindi Şafiî'ye göre, yüksek enlem düzeltmesi yok.<br><b>Temkin:</b> Sabah ${o.fajr}, Güneş ${o.shuruq}, Öğle +${o.dhuhr}, İkindi +${o.asr}, Akşam +${o.maghrib}, Yatsı ${o.isha} dakika.<br><b>Kerahat ve gece</b> gösterilen vakitlere göre hesaplanır.`,
   fb:"* yüksek enlem yedek değeri",foot:(p)=>`${p.name} · ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)} · ${p.tz}`,
   goListT:"Önümüzdeki 45 gün",goListS:"Tüm vakitler ve gün uzunluğu liste halinde",
@@ -510,6 +513,14 @@ const T={
 };
 let lang=store.get("lang","de"); if(!T[lang]) lang="de";
 let hijriOff=+store.get("hijriOff",0)||0;
+let theme=store.get("theme","auto"); if(!["auto","light","dark"].includes(theme)) theme="auto";
+function applyTheme(){
+  const root=document.documentElement;
+  if(theme==="auto")root.removeAttribute("data-theme");else root.setAttribute("data-theme",theme);
+  // status bar colour follows the chosen mode
+  document.querySelectorAll('meta[name="theme-color"]').forEach(m=>{
+    const dark=m.media.includes("dark");m.content=theme==="auto"?(dark?"#0C111D":"#EDF0F5"):(theme==="dark"?"#0C111D":"#EDF0F5")});
+}
 
 const KEYS=["fajr","shuruq","dhuhr","asr","maghrib","isha"];
 const NAME={fajr:"Fajr",shuruq:"Shuruq",dhuhr:"Dhuhr",asr:"Asr",maghrib:"Maghrib",isha:"Isha"};
@@ -684,6 +695,8 @@ function render(){
   document.getElementById("hDate").textContent=hijriText(viewDay);
   document.getElementById("todayBtn").hidden=sameDay(viewDay,todayInPlace());
   document.getElementById("hijriSel").value=String(hijriOff);
+  document.getElementById("lTheme").textContent=L.theme;
+  const ts=document.getElementById("themeSel");L.themeOpts.forEach((t,i)=>ts.options[i].textContent=t);ts.value=theme;
   D=derive(viewDay);
   drawRing(viewDay,D);
   rows(D);
@@ -810,6 +823,7 @@ document.getElementById("placeBtn").onclick=()=>{
   const pc=document.getElementById("placeCard");pc.hidden=!pc.hidden;
   if(!pc.hidden)pc.scrollIntoView({behavior:"smooth",block:"start"});
 };
+document.getElementById("themeSel").onchange=e=>{theme=e.target.value;store.set("theme",theme);applyTheme()};
 document.getElementById("hijriSel").onchange=e=>{hijriOff=+e.target.value;store.set("hijriOff",hijriOff);render()};
 
 const sel=document.getElementById("citySel");
@@ -1048,6 +1062,7 @@ document.getElementById("kzPrevOk").onclick=kzApplyPending;
 document.getElementById("kzPrevNo").onclick=()=>{kzPending=null;document.getElementById("kzPrev").hidden=true};
 
 /* ---------- start ---------- */
+applyTheme();
 kzLoad();
 fillCities();
 viewDay=todayInPlace();lastDay=viewDay;
