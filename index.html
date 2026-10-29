@@ -248,6 +248,39 @@ button{cursor:pointer}
 .tg button:disabled{opacity:.5}
 .sheet .acts{display:flex;flex-direction:column;gap:8px}
 .sheet .acts .btn{padding:13px 12px;font-size:15px}
+.row[data-k]{cursor:pointer;grid-template-columns:auto 1fr auto auto}
+.row[data-k] .chev{color:var(--muted);display:grid;place-items:center;margin-left:-4px}
+.row[data-k]:active{background:var(--surface-2)}
+.g-sheet{max-height:86vh;display:flex;flex-direction:column}
+#gBody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;margin:0 -4px;padding:0 4px 4px}
+.g-headrow{display:flex;align-items:center;gap:12px}
+.g-ar{font-family:var(--font-ar);font-size:30px;color:var(--accent);line-height:1;flex:none}
+.g-hd{min-width:0}
+.g-tm{font-family:var(--font-body);font-size:16px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;margin-left:4px}
+.g-sum{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:14px 0 4px}
+.g-dot{color:var(--muted)}
+.g-chip,.g-badge{display:inline-block;border-radius:999px;font-weight:700;font-size:12.5px;padding:3px 10px;background:var(--surface-2);color:var(--fg);border:1px solid var(--line)}
+.g-fard{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.g-wajib{background:var(--third-soft);color:var(--third);border-color:var(--third)}
+.g-sm{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-soft)}
+.g-sg{background:transparent;color:var(--muted);border:1px dashed var(--muted)}
+.g-badge{font-size:11.5px;padding:2px 8px;white-space:nowrap}
+.g-part{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px;background:var(--surface)}
+.g-ph{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px}
+.g-ph b{font-size:15.5px}
+.g-pts{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:14px;line-height:1.45}
+.g-note{margin:14px 0 0;font-weight:600}
+.g-det{margin-top:8px}
+.g-det summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--accent);padding:6px 0;list-style-position:inside}
+.g-det ol{margin:4px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:5px;font-size:13.5px;line-height:1.45;color:var(--fg)}
+.g-texts{border:1px solid var(--line);border-radius:14px;padding:6px 14px 10px;margin-top:10px}
+.g-tx{border-top:1px solid var(--line);padding:10px 0 4px}
+.g-tx:first-of-type{border-top:0}
+.g-arx{font-family:var(--font-ar);font-size:21px;line-height:1.9;margin:6px 0 4px;text-align:right}
+.g-tl{margin:0;font-size:13.5px;font-style:italic;color:var(--fg)}
+.g-mn{margin:4px 0 0;font-size:13.5px;color:var(--muted)}
+.g-actions{flex:none;padding-top:10px;border-top:1px solid var(--line);margin-top:6px}
+.g-actions .btn{width:100%;padding:13px 12px;font-size:15px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 
@@ -390,6 +423,14 @@ button{cursor:pointer}
   </div>
 
   <p class="foot" id="foot"></p>
+</div>
+
+<div class="sheet-bg" id="gSheetBg" hidden></div>
+<div class="sheet g-sheet" id="gSheet" role="dialog" aria-modal="true" aria-labelledby="gTitle" hidden>
+  <div class="grab"></div>
+  <div class="g-headrow" id="gHead"></div>
+  <div id="gBody"></div>
+  <div class="g-actions"><button class="btn" type="button" id="gClose"></button></div>
 </div>
 
 <div class="sheet-bg" id="kzSheetBg" hidden></div>
@@ -693,7 +734,8 @@ function rows(D){
   for(const k of KEYS){
     const li=document.createElement("li");li.className="row"+(k==="shuruq"?" sunrow":"");li.dataset.k=k;
     const fb=t.fallback[k]?' <span class="fb">*</span>':"";
-    li.innerHTML=`<span class="ar" lang="ar">${AR[k]}</span><span class="nm"><b data-next="${L.next}">${nm(k)}</b>${lang==="tr"?"":`<span>${L.sub[k]}</span>`}</span><span class="tm">${fmt(t[k])}${fb}</span>`;
+    li.innerHTML=`<span class="ar" lang="ar">${AR[k]}</span><span class="nm"><b data-next="${L.next}">${nm(k)}</b>${lang==="tr"?"":`<span>${L.sub[k]}</span>`}</span><span class="tm">${fmt(t[k])}${fb}</span><span class="chev" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>`;
+    li.tabIndex=0;li.setAttribute("role","button");
     pr.appendChild(li);
   }
   if(t.fallback.fajr||t.fallback.isha){const li=document.createElement("li");li.className="row";li.innerHTML=`<span></span><span class="nm"><span>${L.fb}</span></span><span></span>`;pr.appendChild(li)}
@@ -1108,6 +1150,168 @@ document.getElementById("kzLoad").onclick=()=>document.getElementById("kzFile").
 document.getElementById("kzFile").onchange=e=>{const f=e.target.files&&e.target.files[0];kzReadFile(f);e.target.value=""};
 document.getElementById("kzPrevOk").onclick=kzApplyPending;
 document.getElementById("kzPrevNo").onclick=()=>{kzPending=null;document.getElementById("kzPrev").hidden=true};
+
+/* ---------- prayer guide sheet (Hanafi) ---------- */
+const GT={
+ de:{hanafi:"Nach hanafitischer Lehre",rak:"Rak'a",close:"Schließen",steps:"Schritt für Schritt",texts:"Gebetstexte",
+  noPrayer:"Zu dieser Zeit wird kein Gebet verrichtet.",
+  st:{fard:"Fard (Pflicht)",wajib:"Wajib (notwendig)",sm:"Sunna, betont",sg:"Sunna, nicht betont"},
+  pre:"vor",post:"nach",
+  part:{sunna:"Sunna",fard:"Fard",vitr:"Vitr"},
+  pts:{
+   sureAll:"In jeder Rak'a nach der Fatiha eine Zusatzsure.",
+   sureFirst2:"Zusatzsure nur in der 1. und 2. Rak'a, in der 3. und 4. nur die Fatiha.",
+   sureMaghrib:"Zusatzsure nur in der 1. und 2. Rak'a, in der 3. nur die Fatiha.",
+   sit1Tah:"Erstes Sitzen nach der 2. Rak'a: nur Tahiyyat.",
+   sit1Full:"Erstes Sitzen nach der 2. Rak'a: Tahiyyat, Allahumma salli und Allahumma barik.",
+   r3Fatiha:"Die 3. Rak'a beginnt mit Basmala und Fatiha, ohne Subhanaka.",
+   r3Subh:"Die 3. Rak'a beginnt wieder mit Subhanaka, dann A'udhu, Basmala, Fatiha.",
+   twoEnd:"Nach der 2. Rak'a gleich das letzte Sitzen mit Tahiyyat, Salli, Barik, Bittgebeten und Salam.",
+   quiet:"Wird leise gelesen.",
+   loud2:"Der Imam liest in den ersten beiden Rak'a laut; wer allein betet, darf laut oder leise lesen.",
+   loudFajr:"Der Imam liest laut; wer allein betet, darf laut oder leise lesen.",
+   optional:"Freiwillig: Wer wenig Zeit hat, darf sie ohne Bedenken weglassen; wer sie betet, erhält Lohn.",
+   fajrSunna:"Die stärkste aller Sunna-Gebete. Verpasst, darf sie zusammen mit dem Fard bis zum Mittag nachgeholt werden.",
+   vitrTime:"Wird nach dem Isha-Gebet gebetet, spätestens bis Fajr. Ausgelassen, wird es nachgeholt.",
+   vitrKunut:"3. Rak'a: Fatiha und Zusatzsure, dann „Allahu akbar“ mit erhobenen Händen und leise die beiden Kunut-Gebete; danach Ruku.",
+   vitrQuiet:"Leise, außer im Ramadan in Gemeinschaft.",
+   shuruq1:"Mit dem Sonnenaufgang endet die Zeit des Fajr-Gebets.",
+   shuruq2:"Ab Sonnenaufgang ist für 45 Minuten Kerahat-Zeit: kein Gebet, auch kein Nachholgebet."
+  },
+  step:{niyya:"Absicht fassen: ",takbir:"Eröffnungs-Takbir „Allahu akbar“, Hände heben",
+   r:"Rak'a",subh:"Subhanaka",audhu:"A'udhu",basm:"Basmala",fat:"Fatiha",sure:"Zusatzsure",
+   ruku:"Ruku: 3× Subhana rabbiyal-azim",rise:"Aufrichten: Sami'allahu liman hamidah, Rabbana lakal-hamd",
+   sajda:"2 Sajda: je 3× Subhana rabbiyal-a'la",
+   sit1:"Erstes Sitzen: ",sitSg:"Tahiyyat, Allahumma salli, Allahumma barik",sitTah:"nur Tahiyyat",sitL:"Letztes Sitzen: Tahiyyat, Salli, Barik, Rabbana atina, Rabbanaghfir li",
+   salam:"Salam nach rechts und links",kunut:"„Allahu akbar“ mit erhobenen Händen, Kunut 1 und 2"}},
+ tr:{hanafi:"Hanefî mezhebine göre",rak:"rekât",close:"Kapat",steps:"Adım adım",texts:"Namaz duaları",
+  noPrayer:"Bu vakitte namaz kılınmaz.",
+  st:{fard:"Farz",wajib:"Vacip",sm:"Sünnet, müekkede",sg:"Sünnet, gayr-i müekkede"},
+  pre:"ilk",post:"son",
+  part:{sunna:"Sünnet",fard:"Farz",vitr:"Vitir"},
+  pts:{
+   sureAll:"Her rekâtta Fâtiha'dan sonra bir zamm-ı sûre okunur.",
+   sureFirst2:"Zamm-ı sûre yalnız 1. ve 2. rekâtta; 3. ve 4. rekâtta sadece Fâtiha.",
+   sureMaghrib:"Zamm-ı sûre yalnız 1. ve 2. rekâtta; 3. rekâtta sadece Fâtiha.",
+   sit1Tah:"2. rekâttan sonraki ilk oturuşta sadece Ettehiyyâtü okunur.",
+   sit1Full:"2. rekâttan sonraki ilk oturuşta Ettehiyyâtü, Allahümme salli ve Allahümme bârik okunur.",
+   r3Fatiha:"3. rekât Besmele ve Fâtiha ile başlar, Sübhâneke okunmaz.",
+   r3Subh:"3. rekât yeniden Sübhâneke ile başlar, sonra Eûzü, Besmele, Fâtiha.",
+   twoEnd:"2. rekâttan sonra son oturuş: Ettehiyyâtü, Salli, Bârik, dualar ve selam.",
+   quiet:"Gizli okunur.",
+   loud2:"İmam ilk iki rekâtta açıktan okur; yalnız kılan açıktan veya gizli okuyabilir.",
+   loudFajr:"İmam açıktan okur; yalnız kılan açıktan veya gizli okuyabilir.",
+   optional:"İsteğe bağlıdır: Vakit darsa terk edilebilir, kılana sevap vardır.",
+   fajrSunna:"Sünnetlerin en kuvvetlisidir. Kaçırılırsa farzla birlikte öğleye kadar kaza edilebilir.",
+   vitrTime:"Yatsı namazından sonra, en geç sabaha kadar kılınır. Kılınmazsa kaza edilir.",
+   vitrKunut:"3. rekât: Fâtiha ve zamm-ı sûre, sonra elleri kaldırarak „Allahu ekber“ ve gizlice iki Kunut duası; ardından rükû.",
+   vitrQuiet:"Gizli okunur, Ramazan'da cemaatle kılınırken açıktan.",
+   shuruq1:"Güneşin doğuşuyla sabah namazının vakti sona erer.",
+   shuruq2:"Güneş doğduktan sonra 45 dakika kerahat vaktidir: namaz kılınmaz, kaza da kılınmaz."
+  },
+  step:{niyya:"Niyet: ",takbir:"İftitah tekbiri „Allahu ekber“, eller kaldırılır",
+   r:"Rekât",subh:"Sübhâneke",audhu:"Eûzü",basm:"Besmele",fat:"Fâtiha",sure:"Zamm-ı sûre",
+   ruku:"Rükû: 3× Sübhâne rabbiyel-azîm",rise:"Doğrulma: Semiallâhu limen hamideh, Rabbenâ lekel-hamd",
+   sajda:"2 secde: her birinde 3× Sübhâne rabbiyel-a'lâ",
+   sit1:"İlk oturuş: ",sitSg:"Ettehiyyâtü, Allahümme salli, Allahümme bârik",sitTah:"sadece Ettehiyyâtü",sitL:"Son oturuş: Ettehiyyâtü, Salli, Bârik, Rabbenâ âtinâ, Rabbenağfirlî",
+   salam:"Sağa ve sola selam",kunut:"Eller kaldırılarak „Allahu ekber“, Kunut 1 ve 2"}}
+};
+// part types: n = rak'a, kind = sunna|fard|vitr, st = status, pts = point keys
+const GP={
+ fajr:[{kind:"sunna",pos:"pre",n:2,st:"sm",pts:["fajrSunna","sureAll","twoEnd","quiet"]},
+       {kind:"fard",n:2,st:"fard",pts:["sureAll","twoEnd","loudFajr"]}],
+ dhuhr:[{kind:"sunna",pos:"pre",n:4,st:"sm",pts:["sureAll","sit1Tah","r3Fatiha","quiet"]},
+        {kind:"fard",n:4,st:"fard",pts:["sureFirst2","sit1Tah","r3Fatiha","quiet"]},
+        {kind:"sunna",pos:"post",n:2,st:"sm",pts:["sureAll","twoEnd","quiet"]}],
+ asr:[{kind:"sunna",pos:"pre",n:4,st:"sg",pts:["optional","sureAll","sit1Full","r3Subh","quiet"]},
+      {kind:"fard",n:4,st:"fard",pts:["sureFirst2","sit1Tah","r3Fatiha","quiet"]}],
+ maghrib:[{kind:"fard",n:3,st:"fard",pts:["sureMaghrib","sit1Tah","r3Fatiha","loud2"]},
+          {kind:"sunna",pos:"post",n:2,st:"sm",pts:["sureAll","twoEnd","quiet"]}],
+ isha:[{kind:"sunna",pos:"pre",n:4,st:"sg",pts:["optional","sureAll","sit1Full","r3Subh","quiet"]},
+       {kind:"fard",n:4,st:"fard",pts:["sureFirst2","sit1Tah","r3Fatiha","loud2"]},
+       {kind:"sunna",pos:"post",n:2,st:"sm",pts:["sureAll","twoEnd","quiet"]},
+       {kind:"vitr",n:3,st:"wajib",pts:["vitrTime","sureAll","sit1Tah","vitrKunut","vitrQuiet"]}]
+};
+const GTX=[
+ {id:"subh",n:{de:"Subhanaka",tr:"Sübhâneke"},ar:"سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ وَلَا إِلَهَ غَيْرُكَ",
+  tl:"Subhanakallahumma wa bihamdika, wa tabarakasmuka, wa ta'ala dschadduka, wa la ilaha ghayruk",
+  de:"Gepriesen seist Du, o Allah, und gelobt. Gesegnet ist Dein Name, erhaben Deine Majestät, und es gibt keinen Gott außer Dir.",
+  tr:"Allah'ım, seni her türlü noksanlıktan tenzih eder ve överim. Adın mübarektir, şanın yücedir, senden başka ilah yoktur."},
+ {id:"tah",n:{de:"Tahiyyat",tr:"Ettehiyyâtü"},ar:"التَّحِيَّاتُ لِلَّهِ وَالصَّلَوَاتُ وَالطَّيِّبَاتُ السَّلَامُ عَلَيْكَ أَيُّهَا النَّبِيُّ وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ السَّلَامُ عَلَيْنَا وَعَلَى عِبَادِ اللَّهِ الصَّالِحِينَ أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللَّهُ وَأَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ",
+  tl:"At-tahiyyatu lillahi was-salawatu wat-tayyibat. As-salamu alayka ayyuhan-nabiyyu wa rahmatullahi wa barakatuh. As-salamu alayna wa ala ibadillahis-salihin. Asch-hadu an la ilaha illallah, wa asch-hadu anna Muhammadan abduhu wa rasuluh.",
+  de:"Alle Grüße, Gebete und guten Worte gehören Allah. Friede sei mit dir, o Prophet, und die Barmherzigkeit Allahs und Sein Segen. Friede sei mit uns und den rechtschaffenen Dienern Allahs. Ich bezeuge, dass es keinen Gott gibt außer Allah, und ich bezeuge, dass Muhammad Sein Diener und Gesandter ist.",
+  tr:"Bütün dualar, ibadetler ve güzel sözler Allah'a aittir. Ey Peygamber! Allah'ın selamı, rahmeti ve bereketi senin üzerine olsun. Selam bizim ve Allah'ın salih kullarının üzerine olsun. Şahitlik ederim ki Allah'tan başka ilah yoktur ve Muhammed O'nun kulu ve elçisidir."},
+ {id:"salli",n:{de:"Allahumma salli",tr:"Allahümme salli"},ar:"اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا صَلَّيْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
+  tl:"Allahumma salli ala Muhammadin wa ala ali Muhammad, kama sallayta ala Ibrahima wa ala ali Ibrahim, innaka hamidun madschid.",
+  de:"O Allah, segne Muhammad und die Familie Muhammads, wie Du Ibrahim und die Familie Ibrahims gesegnet hast. Du bist der Lobenswerte, der Ruhmreiche.",
+  tr:"Allah'ım! İbrahim'e ve ailesine rahmet ettiğin gibi Muhammed'e ve ailesine de rahmet et. Şüphesiz sen övülmeye layıksın, şerefi yüce olansın."},
+ {id:"barik",n:{de:"Allahumma barik",tr:"Allahümme bârik"},ar:"اللَّهُمَّ بَارِكْ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ كَمَا بَارَكْتَ عَلَى إِبْرَاهِيمَ وَعَلَى آلِ إِبْرَاهِيمَ إِنَّكَ حَمِيدٌ مَجِيدٌ",
+  tl:"Allahumma barik ala Muhammadin wa ala ali Muhammad, kama barakta ala Ibrahima wa ala ali Ibrahim, innaka hamidun madschid.",
+  de:"O Allah, gib Muhammad und der Familie Muhammads Segen, wie Du Ibrahim und der Familie Ibrahims Segen gegeben hast. Du bist der Lobenswerte, der Ruhmreiche.",
+  tr:"Allah'ım! İbrahim'e ve ailesine bereket verdiğin gibi Muhammed'e ve ailesine de bereket ver. Şüphesiz sen övülmeye layıksın, şerefi yüce olansın."},
+ {id:"atina",n:{de:"Rabbana atina",tr:"Rabbenâ âtinâ"},ar:"رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+  tl:"Rabbana atina fid-dunya hasanatan wa fil-akhirati hasanatan wa qina adhaban-nar.",
+  de:"Unser Herr, gib uns im Diesseits Gutes und im Jenseits Gutes, und bewahre uns vor der Strafe des Feuers.",
+  tr:"Rabbimiz! Bize dünyada da iyilik ver, ahirette de iyilik ver ve bizi cehennem azabından koru."},
+ {id:"ighfir",n:{de:"Rabbanaghfir li",tr:"Rabbenağfirlî"},ar:"رَبَّنَا اغْفِرْ لِي وَلِوَالِدَيَّ وَلِلْمُؤْمِنِينَ يَوْمَ يَقُومُ الْحِسَابُ",
+  tl:"Rabbanaghfir li wa li-walidayya wa lil-mu'minina yawma yaqumul-hisab.",
+  de:"Unser Herr, vergib mir, meinen Eltern und den Gläubigen am Tag der Abrechnung.",
+  tr:"Rabbimiz! Hesap gününde beni, anne babamı ve müminleri bağışla."},
+ {id:"kunut1",vitr:true,n:{de:"Kunut 1",tr:"Kunut 1"},ar:"اللَّهُمَّ إِنَّا نَسْتَعِينُكَ وَنَسْتَغْفِرُكَ وَنَسْتَهْدِيكَ وَنُؤْمِنُ بِكَ وَنَتُوبُ إِلَيْكَ وَنَتَوَكَّلُ عَلَيْكَ وَنُثْنِي عَلَيْكَ الْخَيْرَ كُلَّهُ نَشْكُرُكَ وَلَا نَكْفُرُكَ وَنَخْلَعُ وَنَتْرُكُ مَنْ يَفْجُرُكَ",
+  tl:"Allahumma inna nasta'inuka wa nastaghfiruka wa nastahdik, wa nu'minu bika wa natubu ilayk, wa natawakkalu alayk, wa nuthni alaykal-khayra kullah, naschkuruka wa la nakfuruk, wa nakhla'u wa natruku man yafdschuruk.",
+  de:"O Allah, wir bitten Dich um Hilfe, um Vergebung und um Rechtleitung. Wir glauben an Dich, kehren reuig zu Dir zurück und vertrauen auf Dich. Wir preisen Dich mit allem Guten, danken Dir und verleugnen Dich nicht. Wir lassen ab von dem, der sich Dir widersetzt.",
+  tr:"Allah'ım! Senden yardım, bağışlanma ve hidayet dileriz. Sana inanır, sana tövbe eder, sana güveniriz. Seni hayırla över, sana şükrederiz, nimetlerini inkar etmeyiz. Sana karşı geleni bırakırız."},
+ {id:"kunut2",vitr:true,n:{de:"Kunut 2",tr:"Kunut 2"},ar:"اللَّهُمَّ إِيَّاكَ نَعْبُدُ وَلَكَ نُصَلِّي وَنَسْجُدُ وَإِلَيْكَ نَسْعَى وَنَحْفِدُ نَرْجُو رَحْمَتَكَ وَنَخْشَى عَذَابَكَ إِنَّ عَذَابَكَ بِالْكُفَّارِ مُلْحِقٌ",
+  tl:"Allahumma iyyaka na'budu wa laka nusalli wa nasdschud, wa ilayka nas'a wa nahfid, nardschu rahmataka wa nakhscha adhabak, inna adhabaka bil-kuffari mulhiq.",
+  de:"O Allah, Dir allein dienen wir, für Dich beten wir und werfen uns nieder. Zu Dir eilen wir und dienen Dir eifrig. Wir hoffen auf Deine Barmherzigkeit und fürchten Deine Strafe. Deine Strafe trifft gewiss die Ungläubigen.",
+  tr:"Allah'ım! Yalnız sana ibadet eder, senin için namaz kılar ve secde ederiz. Sana koşar, sana yaklaştıracak işleri yaparız. Rahmetini umar, azabından korkarız. Şüphesiz senin azabın kafirlere ulaşacaktır."}
+];
+const gEsc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const gTl=s=>lang==="tr"?s.replace(/dsch/g,"c").replace(/Dsch/g,"C").replace(/sch/g,"ş").replace(/Sch/g,"Ş"):s;
+function gPartName(k,p){const G=GT[lang];const pn=(lang==="tr"&&k==="fajr")?"Sabah":nm(k);
+  if(p.kind==="vitr")return G.part.vitr;
+  if(p.kind==="fard")return lang==="tr"?`${pn} farzı`:`${G.part.fard} von ${pn}`;
+  return lang==="tr"?`${pn} namazının ${G[p.pos]} sünneti`:`${G.part.sunna} ${G[p.pos]} ${pn}`}
+function gSteps(k,p){const S=GT[lang].step,out=[];
+  const fard=p.kind==="fard",sg=p.st==="sg";
+  out.push(S.niyya+gPartName(k,p));out.push(S.takbir);
+  for(let r=1;r<=p.n;r++){
+    const rd=[];
+    if(r===1||(r===3&&sg))rd.push(S.subh,S.audhu);
+    rd.push(S.basm,S.fat);
+    if(!fard||r<=2)rd.push(S.sure);
+    if(r===3&&p.kind==="vitr")rd.push(S.kunut);
+    out.push(`<b>${r}. ${S.r}:</b> ${rd.join(", ")} · ${S.ruku} · ${S.rise} · ${S.sajda}`);
+    if(r===2&&p.n>2)out.push(`<b>${S.sit1}</b>${sg?S.sitSg:S.sitTah}`);
+  }
+  out.push(`<b>${S.sitL.split(":")[0]}:</b>${S.sitL.split(":").slice(1).join(":")}`);out.push(S.salam);
+  return out}
+function gOpen(k){const G=GT[lang],t=D&&D.t;
+  const head=document.getElementById("gHead");
+  head.innerHTML=`<span class="g-ar" lang="ar">${AR[k]}</span><span class="g-hd"><h3 id="gTitle">${gEsc(nm(k))}${t?` <span class="g-tm">${fmt(t[k])}</span>`:""}</h3><p class="shsub">${G.hanafi}</p></span>`;
+  const body=document.getElementById("gBody");
+  if(k==="shuruq"){body.innerHTML=`<p class="g-note">${G.noPrayer}</p><ul class="g-pts"><li>${G.pts.shuruq1}</li><li>${G.pts.shuruq2}</li></ul>`}
+  else{
+    const parts=GP[k];
+    const summary=parts.map(p=>`<span class="g-chip g-${p.st}">${p.n} ${p.kind==="vitr"?G.part.vitr:p.kind==="fard"?G.part.fard:G.part.sunna}</span>`).join('<span class="g-dot">·</span>');
+    let h=`<div class="g-sum">${summary}</div>`;
+    parts.forEach(p=>{
+      h+=`<section class="g-part"><div class="g-ph"><b>${gEsc(gPartName(k,p))}</b><span class="g-badge g-${p.st}">${p.n} ${G.rak} · ${G.st[p.st]}</span></div>`+
+         `<ul class="g-pts">${p.pts.map(x=>`<li>${G.pts[x]}</li>`).join("")}</ul>`+
+         `<details class="g-det"><summary>${G.steps}</summary><ol>${gSteps(k,p).map(s=>`<li>${s}</li>`).join("")}</ol></details></section>`});
+    const texts=GTX.filter(x=>!x.vitr||k==="isha");
+    h+=`<details class="g-det g-texts"><summary>${G.texts}</summary>${texts.map(x=>`<div class="g-tx"><b>${x.n[lang]}</b><p class="g-arx" lang="ar" dir="rtl">${x.ar}</p><p class="g-tl">${gEsc(gTl(x.tl))}</p><p class="g-mn">${gEsc(x[lang])}</p></div>`).join("")}</details>`;
+    body.innerHTML=h}
+  document.getElementById("gClose").textContent=G.close;
+  document.getElementById("gSheetBg").hidden=false;const sh=document.getElementById("gSheet");sh.hidden=false;body.scrollTop=0;
+  document.getElementById("gClose").focus({preventScroll:true});
+}
+function gCloseSheet(){document.getElementById("gSheetBg").hidden=true;document.getElementById("gSheet").hidden=true}
+document.getElementById("prayerRows").addEventListener("click",e=>{const r=e.target.closest(".row[data-k]");if(r)gOpen(r.dataset.k)});
+document.getElementById("prayerRows").addEventListener("keydown",e=>{if(e.key!=="Enter"&&e.key!==" ")return;const r=e.target.closest(".row[data-k]");if(r){e.preventDefault();gOpen(r.dataset.k)}});
+document.getElementById("gSheetBg").onclick=gCloseSheet;
+document.getElementById("gClose").onclick=gCloseSheet;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("gSheet").hidden)gCloseSheet()});
 
 /* ---------- start ---------- */
 applyTheme();
