@@ -225,6 +225,34 @@ button{cursor:pointer}
 .cal .dots i.on{opacity:.85}
 .sw.ok{background:var(--kz-ok)} .sw.pa{background:var(--kz-part)} .sw.op{background:var(--kz-open)}
 .kz-legend{padding:6px 10px 14px;margin:0}
+.mf-card{display:flex;flex-direction:column;align-items:center;gap:12px;padding:16px}
+.mf-tag{align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.4px;color:var(--accent)}
+.mf-ring{position:relative;width:190px;height:190px}
+.mf-ring svg{display:block;transform:rotate(-90deg)}
+.mf-ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.mf-ring .ar{font-family:var(--font-ar);font-size:22px;color:var(--accent);line-height:1}
+.mf-ring b{font-size:38px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.mf-ring span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mf-today{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;flex-wrap:wrap;justify-content:center}
+.mf-dots{display:flex;gap:7px;align-items:center}.mf-dots i{width:20px;height:20px;border-radius:50%;border:2px solid var(--kz-ok);display:block}.mf-dots i.f{background:var(--kz-ok)}
+.mf-dots em{font-style:normal;font-size:13px;color:var(--kz-ok);font-weight:700}
+.mf-plus{width:100%;border:0;border-radius:14px;padding:15px;font-weight:700;font-size:17px;background:var(--kz-ok);color:var(--surface);min-height:52px}
+.mf-plus:disabled{opacity:.45}
+.mf-plus:active{transform:scale(.99)}
+.mf-sub{display:flex;justify-content:space-between;align-items:center;width:100%;font-size:13px;color:var(--muted);gap:10px}
+.mf-sub button{border:0;background:none;color:var(--accent);font-weight:600;font-size:13px;padding:6px 0}
+.mf-sum{padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.mf-sum .rw{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px}
+.mf-sum .rw b{font-weight:600}
+.mf-sum small{font-size:12.5px;color:var(--muted)}
+.mf-sum .bar{margin:6px 0 8px}
+.mf-calh{padding:13px 16px 0}
+.mf-calh b{display:block;font-family:var(--font-display);font-weight:400;font-size:17px}
+.mf-calh small{font-size:12.5px;color:var(--muted)}
+.cal .mf-c{font-size:10px;font-weight:700;opacity:.75}
+.cal .mf-now{box-shadow:0 0 0 2px var(--fg)}
+.kz-allbtn{width:100%}
+
 .kz-warn{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--makruh-soft);border:1px solid var(--makruh);border-radius:var(--r);padding:12px 14px;font-size:13.5px}
 .kz-warn b{display:block;font-weight:600}
 .kz-warn span{color:var(--muted);font-size:12.5px}
@@ -380,6 +408,34 @@ button{cursor:pointer}
       <div><h1 id="kzTitle"></h1><p id="kzSub"></p></div>
     </div>
     <p class="msg err kz-err" id="kzErr" hidden></p>
+    <div class="kz-warn" id="kzWarn" hidden><div><b id="kzWarnT"></b><span id="kzWarnS"></span></div><button class="btn primary" type="button" id="kzWarnBtn"></button></div>
+    <section class="card mf-card">
+      <span class="mf-tag" id="mfTag"></span>
+      <div class="mf-ring"><svg width="190" height="190" aria-hidden="true"><circle cx="95" cy="95" r="80" fill="none" stroke="var(--surface-2)" stroke-width="15"/><circle id="mfArc" cx="95" cy="95" r="80" fill="none" stroke="var(--kz-ok)" stroke-width="15" stroke-linecap="round" stroke-dasharray="0 503"/></svg>
+        <div class="c"><span class="ar" lang="ar">المغرب</span><b id="mfNum"></b><span id="mfOf"></span></div></div>
+      <div class="mf-today"><span id="mfTodayL"></span><span class="mf-dots" id="mfDots"></span><span id="mfTodayN"></span></div>
+      <button class="mf-plus" type="button" id="mfPlus"></button>
+      <div class="mf-sub"><span id="mfNext"></span><button type="button" id="mfUndo" hidden></button></div>
+    </section>
+    <section class="card">
+      <div class="mf-calh"><b id="mfCalH"></b><small id="mfCalS"></small></div>
+      <div class="kz-nav"><div class="kz-step"><button type="button" id="mfPrev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="mfMonth" style="min-width:110px"></b><button type="button" id="mfNextM"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div></div>
+      <div class="cal" id="mfCal"></div>
+      <div class="legend kz-legend">
+        <span><i class="sw ok"></i><em id="mfLgOk" style="font-style:normal"></em></span>
+        <span><i class="sw pa"></i><em id="mfLgPa" style="font-style:normal"></em></span>
+        <span><i class="sw op"></i><em id="mfLgOp" style="font-style:normal"></em></span>
+      </div>
+    </section>
+    <section class="card mf-sum">
+      <div class="rw"><b id="mfFinH"></b><span id="mfFinD"></span></div>
+      <small id="mfFinS"></small>
+      <div class="bar"><i id="mfBar"></i></div>
+      <div class="rw"><b id="mfTotH"></b><small id="mfTotV"></small></div>
+      <div class="bar"><i id="mfTotBar"></i></div>
+    </section>
+    <button class="btn kz-allbtn" type="button" id="kzAllBtn"></button>
+    <div id="kzAll" class="stack" hidden>
     <section class="card">
       <div class="kz-nav">
         <div class="kz-step"><button type="button" id="kzPrevY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="kzY"></b><button type="button" id="kzNextY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div>
@@ -392,7 +448,6 @@ button{cursor:pointer}
         <span><i class="sw op"></i><em id="kzLgOp" style="font-style:normal"></em></span>
       </div>
     </section>
-    <div class="kz-warn" id="kzWarn" hidden><div><b id="kzWarnT"></b><span id="kzWarnS"></span></div><button class="btn primary" type="button" id="kzWarnBtn"></button></div>
     <section class="card">
       <div class="kz-top">
         <div class="kz-num ok"><b id="kzDone"></b><span id="kzDoneL"></span></div>
@@ -403,6 +458,7 @@ button{cursor:pointer}
       <div class="kz-years" id="kzYears"></div>
       <p class="kz-proj" id="kzProj"></p>
     </section>
+    </div>
     <section class="card">
       <h2><span id="kzBakH"></span></h2>
       <div class="set">
@@ -431,6 +487,15 @@ button{cursor:pointer}
   <div class="g-headrow" id="gHead"></div>
   <div id="gBody"></div>
   <div class="g-actions"><button class="btn" type="button" id="gClose"></button></div>
+</div>
+
+<div class="sheet-bg" id="mfSheetBg" hidden></div>
+<div class="sheet" id="mfSheet" role="dialog" aria-modal="true" aria-labelledby="mfShDate" hidden>
+  <div class="grab"></div>
+  <h3 id="mfShDate"></h3>
+  <p class="shsub" id="mfShSub"></p>
+  <div class="tg" id="mfToggles"></div>
+  <div class="acts"><button class="btn primary" type="button" id="mfAll"></button><button class="btn" type="button" id="mfShClose"></button></div>
 </div>
 
 <div class="sheet-bg" id="kzSheetBg" hidden></div>
@@ -848,7 +913,7 @@ function showView(v){
   document.getElementById("foot").hidden=v==="kaza";
   try{history.replaceState(null,"",v==="list"?"#tage":v==="kaza"?"#kaza":"#")}catch(e){}
   if(v==="list")renderList();
-  if(v==="kaza"){kzJumpToOpen();renderKaza()}else kzCloseSheet();
+  if(v==="kaza"){kzJumpToOpen();if(typeof mfJump==="function")mfJump();renderKaza()}else{kzCloseSheet();if(typeof mfCloseSheet==="function")mfCloseSheet()}
   window.scrollTo(0,0);
 }
 function showList(on){showView(on?"list":"main")}
@@ -1046,6 +1111,7 @@ function renderKaza(){
   if(kzOpenDay>=0)kzRenderSheet();
   if(kzPending)kzShowPreview(false);
   kzShowMsg();
+  if(typeof mfRender==="function")mfRender();
 }
 
 function kzRenderCal(){
@@ -1095,7 +1161,7 @@ async function kzExport(){
   const K=T[lang].kz;if(kzState==="broken")return;
   const name=`vakit-kaza-${isoDay(deviceToday())}.json`;
   const data={app:"Vakit Ring",type:"kaza",version:1,created:new Date().toISOString(),start:"2022-01-01",end:"2031-12-31",
-    prayers:KZ_KEYS,encoding:"one hex digit per day; 1 dhuhr, 2 asr, 4 maghrib, 8 isha",days:kzEncode(kz),log:kzLog};
+    prayers:KZ_KEYS,encoding:"one hex digit per day; 1 dhuhr, 2 asr, 4 maghrib, 8 isha",days:kzEncode(kz),log:kzLog,mlog:mfLog};
   const blob=new Blob([JSON.stringify(data)],{type:"application/json"});
   let file=null;try{file=new File([blob],name,{type:"application/json"})}catch(e){}
   const done=()=>{kzMarkBackup();kzBakMsg("saved",false);renderKaza()};
@@ -1113,7 +1179,7 @@ function kzReadFile(f){
   const r=new FileReader();
   r.onload=()=>{let o=null;try{o=JSON.parse(String(r.result))}catch(e){}
     if(!o||o.type!=="kaza"||o.start!=="2022-01-01"||!kzValidDays(o.days)){kzBakMsg("bad",true);return}
-    kzPending={days:kzDecode(o.days),log:kzCleanLog(o.log),created:Date.parse(o.created)};kzShowPreview(true)};
+    kzPending={days:kzDecode(o.days),log:kzCleanLog(o.log),mlog:o.mlog&&typeof o.mlog==="object"?kzCleanLog(o.mlog):null,created:Date.parse(o.created)};kzShowPreview(true)};
   r.onerror=()=>kzBakMsg("bad",true);
   r.readAsText(f);
 }
@@ -1127,9 +1193,9 @@ function kzShowPreview(scroll){
 }
 function kzApplyPending(){
   if(!kzPending)return;const K=T[lang].kz;
-  kz=kzPending.days;kzLog=kzPending.log;kzPending=null;kzState="ok";
+  kz=kzPending.days;kzLog=kzPending.log;if(kzPending.mlog){mfLog=kzPending.mlog;mfSaveExtra()}mfUndo=[];kzPending=null;kzState="ok";
   const ok=kzSave();document.getElementById("kzPrev").hidden=true;
-  kzBakMsg(ok?"loaded":"saveErr",!ok);kzJumpToOpen();renderKaza();kzMainButton();
+  kzBakMsg(ok?"loaded":"saveErr",!ok);kzJumpToOpen();mfJump();renderKaza();kzMainButton();
 }
 
 document.getElementById("openKaza").onclick=()=>showView("kaza");
@@ -1312,6 +1378,96 @@ document.getElementById("prayerRows").addEventListener("keydown",e=>{if(e.key!==
 document.getElementById("gSheetBg").onclick=gCloseSheet;
 document.getElementById("gClose").onclick=gCloseSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!document.getElementById("gSheet").hidden)gCloseSheet()});
+
+/* ---------- Maghrib focus 2027-2031 (5 per day: same date in each year) ---------- */
+const MF_Y=[2027,2028,2029,2030,2031], MF_PER_DAY=5, MF_LS={log:"vakit.kaza.mlog",undo:"vakit.kaza.mundo"};
+const MFT={
+ de:{tag:"FOKUS · MAGHRIB 2027 BIS 2031",of:n=>`von ${n}`,today:"Heute",todayOf:(a,b)=>`${a} von ${b}`,plus:"+1 Maghrib erledigt",
+  next:d=>`Als Nächstes: ${d}`,allDone:"Alle Maghrib 2027 bis 2031 erledigt",undo:"Rückgängig",
+  finH:"Alle Maghrib fertig",finD:d=>`ca. ${d}`,finSub:n=>`Bei 5 pro Tag · noch ${n} Gebete`,finNone:"Geschafft",
+  total:"Kaza gesamt",totalV:(a,b,p)=>`${a} von ${b} · ${p}`,calH:"Maghrib-Kalender",calSub:"Jeder Tag = dieses Datum in 2027 bis 2031",
+  dayOf:(a,b)=>`${a} von ${b} erledigt`,allYears:"Alle erledigt",lgOk:"alle erledigt",lgPa:"teilweise",lgOp:"offen",
+  showAll:"Kalender aller vier Gebete anzeigen",hideAll:"Kalender aller vier Gebete ausblenden",prevM:"Vorheriger Monat",nextM:"Nächster Monat"},
+ tr:{tag:"ODAK · AKŞAM 2027–2031",of:n=>`/ ${n}`,today:"Bugün",todayOf:(a,b)=>`${a} / ${b}`,plus:"+1 Akşam kılındı",
+  next:d=>`Sıradaki: ${d}`,allDone:"2027–2031 akşam namazlarının hepsi tamam",undo:"Geri al",
+  finH:"Tüm akşam namazları bitişi",finD:d=>`yakl. ${d}`,finSub:n=>`Günde 5 ile · kalan ${n} namaz`,finNone:"Tamamlandı",
+  total:"Toplam kaza",totalV:(a,b,p)=>`${a} / ${b} · ${p}`,calH:"Akşam takvimi",calSub:"Her gün = 2027–2031 yıllarında bu tarih",
+  dayOf:(a,b)=>`${a} / ${b} kılındı`,allYears:"Hepsi kılındı",lgOk:"hepsi tamam",lgPa:"kısmen",lgOp:"açık",
+  showAll:"Dört vaktin takvimini göster",hideAll:"Dört vaktin takvimini gizle",prevM:"Önceki ay",nextM:"Sonraki ay"}
+};
+// slot order: date by date (1 Jan, 2 Jan, ...), inside a date year by year
+const MF_SLOTS=[];const MF_BYMD={};
+for(let m=1;m<=12;m++)for(let d=1;d<=31;d++){const list=[];
+  for(const y of MF_Y){const t=new Date(Date.UTC(y,m-1,d));if(t.getUTCMonth()===m-1)list.push({y,i:kzIdx(y,m,d)})}
+  if(list.length){MF_BYMD[m+"-"+d]=list;list.forEach(s=>MF_SLOTS.push(s.i))}}
+const MF_TOTAL=MF_SLOTS.length; // 1826
+let mfLog={},mfUndo=[],mfM=1,mfOpenMD=null;
+try{const o=JSON.parse(lsGet(MF_LS.log)||"{}");if(o&&typeof o==="object")for(const k in o)if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&Number.isFinite(o[k])&&o[k]>0)mfLog[k]=Math.round(o[k])}catch(e){}
+try{const u=JSON.parse(lsGet(MF_LS.undo)||"[]");if(Array.isArray(u))mfUndo=u.filter(n=>Number.isInteger(n)&&n>=0&&n<KZ_DAYS).slice(-50)}catch(e){}
+const mfHas=i=>!!(kz[i]&KZ_BIT.maghrib);
+const mfDone=()=>MF_SLOTS.reduce((s,i)=>s+(mfHas(i)?1:0),0);
+const mfNextSlot=()=>{for(const i of MF_SLOTS)if(!mfHas(i))return i;return -1};
+const mfToday=()=>mfLog[isoDay(deviceToday())]||0;
+function mfSaveExtra(){lsSet(MF_LS.log,JSON.stringify(mfLog));lsSet(MF_LS.undo,JSON.stringify(mfUndo.slice(-50)))}
+function mfSet(i,on){
+  if(kzState==="broken"||mfHas(i)===on)return false;
+  const key=isoDay(deviceToday());mfLog[key]=Math.max(0,(mfLog[key]||0)+(on?1:-1));if(!mfLog[key])delete mfLog[key];
+  mfSaveExtra();kzSetDay(i,on?kz[i]|KZ_BIT.maghrib:kz[i]&~KZ_BIT.maghrib);return true}
+function mfPlus(){const i=mfNextSlot();if(i<0)return;if(mfSet(i,true)){mfUndo.push(i);mfSaveExtra();mfJump();renderKaza()}}
+function mfUndoLast(){while(mfUndo.length){const i=mfUndo.pop();if(mfHas(i)){mfSet(i,false);break}}mfSaveExtra();mfJump();renderKaza()}
+function mfJump(){const i=mfNextSlot();if(i>=0)mfM=kzDate(i).m}
+function mfRender(){
+  const L=T[lang],F=MFT[lang],$=id=>document.getElementById(id),nf=n=>kzN(n);
+  const done=mfDone(),left=MF_TOTAL-done,today=mfToday();
+  $("mfTag").textContent=F.tag;$("mfNum").textContent=nf(done);$("mfOf").textContent=F.of(nf(MF_TOTAL));
+  const C=2*Math.PI*80;$("mfArc").setAttribute("stroke-dasharray",`${Math.max(done?4:0,C*done/MF_TOTAL)} ${C}`);
+  $("mfTodayL").textContent=F.today;
+  $("mfDots").innerHTML=Array.from({length:MF_PER_DAY},(_,k)=>`<i${k<today?' class="f"':""}></i>`).join("")+(today>MF_PER_DAY?`<em>+${today-MF_PER_DAY}</em>`:"");
+  $("mfTodayN").textContent=F.todayOf(Math.min(today,99),MF_PER_DAY);
+  const ni=mfNextSlot();$("mfPlus").textContent=F.plus;$("mfPlus").disabled=ni<0||kzState==="broken";
+  $("mfNext").textContent=ni<0?F.allDone:F.next(kzFmtDate(new Date(KZ_START+ni*864e5),{month:"short"}));
+  $("mfUndo").textContent=F.undo;$("mfUndo").hidden=!mfUndo.some(mfHas);
+  // finish estimate at 5 per day, counting what is left for today
+  $("mfFinH").textContent=F.finH;
+  if(left<=0){$("mfFinD").textContent=F.finNone;$("mfFinS").textContent=""}
+  else{const restToday=Math.max(0,MF_PER_DAY-today),days=left<=restToday?0:Math.ceil((left-restToday)/MF_PER_DAY),td=deviceToday();
+    $("mfFinD").textContent=F.finD(kzFmtDate(new Date(Date.UTC(td.y,td.m-1,td.d+days))));$("mfFinS").textContent=F.finSub(nf(left))}
+  $("mfBar").style.width=Math.max(done?1:0,done/MF_TOTAL*100)+"%";
+  const c=kzCount(kz);$("mfTotH").textContent=F.total;$("mfTotV").textContent=F.totalV(nf(c.done),nf(c.total),kzPct(c.done,c.total,1));$("mfTotBar").style.width=(c.done/c.total*100)+"%";
+  // calendar
+  $("mfCalH").textContent=F.calH;$("mfCalS").textContent=F.calSub;
+  $("mfMonth").textContent=new Intl.DateTimeFormat(L.loc,{month:"long",timeZone:"UTC"}).format(new Date(Date.UTC(2028,mfM-1,15)));
+  $("mfPrev").setAttribute("aria-label",F.prevM);$("mfNextM").setAttribute("aria-label",F.nextM);
+  $("mfLgOk").textContent=F.lgOk;$("mfLgPa").textContent=F.lgPa;$("mfLgOp").textContent=F.lgOp;
+  const dF=new Intl.DateTimeFormat(L.loc,{day:"numeric",month:"long",timeZone:"UTC"});
+  let h="";const n=new Date(Date.UTC(2028,mfM,0)).getUTCDate(),nextMD=ni<0?null:(d=>d.m+"-"+d.d)(kzDate(ni));
+  for(let d=1;d<=n;d++){const md=mfM+"-"+d,list=MF_BYMD[md],dn=list.filter(s=>mfHas(s.i)).length,st=dn===list.length?2:dn>0?1:0;
+    h+=`<button type="button" class="day s${st}${md===nextMD?" mf-now":""}" data-md="${md}" aria-label="${dF.format(new Date(Date.UTC(2028,mfM-1,d)))}: ${F.dayOf(dn,list.length)}"><span>${d}</span><span class="mf-c">${dn}/${list.length}</span></button>`}
+  $("mfCal").innerHTML=h;
+  $("kzAllBtn").textContent=$("kzAll").hidden?F.showAll:F.hideAll;
+  if(mfOpenMD)mfRenderSheet();
+}
+function mfRenderSheet(){
+  const L=T[lang],F=MFT[lang],$=id=>document.getElementById(id),[m,d]=mfOpenMD.split("-").map(Number),list=MF_BYMD[mfOpenMD];
+  $("mfShDate").textContent=new Intl.DateTimeFormat(L.loc,{day:"numeric",month:"long",timeZone:"UTC"}).format(new Date(Date.UTC(2028,m-1,d)))+" · "+nm("maghrib");
+  const dn=list.filter(s=>mfHas(s.i)).length;$("mfShSub").textContent=F.dayOf(dn,list.length);
+  const ck='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  $("mfToggles").innerHTML=list.map(s=>`<button type="button" role="switch" data-i="${s.i}" aria-checked="${mfHas(s.i)}"${kzState==="broken"?" disabled":""}><span>${s.y}</span><span class="ck">${ck}</span></button>`).join("");
+  $("mfAll").textContent=F.allYears;$("mfAll").disabled=kzState==="broken"||dn===list.length;$("mfShClose").textContent=T[lang].kz.close;
+}
+function mfOpenSheet(md){mfOpenMD=md;mfRenderSheet();document.getElementById("mfSheetBg").hidden=false;document.getElementById("mfSheet").hidden=false}
+function mfCloseSheet(){mfOpenMD=null;document.getElementById("mfSheetBg").hidden=true;document.getElementById("mfSheet").hidden=true}
+document.getElementById("mfPlus").onclick=mfPlus;
+document.getElementById("mfUndo").onclick=mfUndoLast;
+document.getElementById("mfPrev").onclick=()=>{mfM=mfM===1?12:mfM-1;mfRender()};
+document.getElementById("mfNextM").onclick=()=>{mfM=mfM===12?1:mfM+1;mfRender()};
+document.getElementById("mfCal").onclick=e=>{const b=e.target.closest("button.day");if(b)mfOpenSheet(b.dataset.md)};
+document.getElementById("mfToggles").onclick=e=>{const b=e.target.closest("button[data-i]");if(!b)return;const i=+b.dataset.i;mfSet(i,!mfHas(i))};
+document.getElementById("mfAll").onclick=()=>{if(!mfOpenMD)return;MF_BYMD[mfOpenMD].forEach(s=>{if(!mfHas(s.i))mfSet(s.i,true)})};
+document.getElementById("mfShClose").onclick=mfCloseSheet;
+document.getElementById("mfSheetBg").onclick=mfCloseSheet;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mfOpenMD)mfCloseSheet()});
+document.getElementById("kzAllBtn").onclick=()=>{const a=document.getElementById("kzAll");a.hidden=!a.hidden;mfRender()};
 
 /* ---------- start ---------- */
 applyTheme();
