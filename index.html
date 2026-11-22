@@ -202,9 +202,9 @@ button{cursor:pointer}
 .bar i{display:block;height:100%;background:var(--kz-ok)}
 .kz-barwrap{padding:0 16px 4px}
 .kz-years{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;padding:12px 16px 12px}
-.kz-yr{display:grid;grid-template-columns:34px 1fr 38px;align-items:center;gap:6px;font-size:12px;font-variant-numeric:tabular-nums}
+.kz-yr{display:grid;grid-template-columns:34px 1fr 46px;align-items:center;gap:6px;font-size:12px;font-variant-numeric:tabular-nums}
 .kz-yr .bar{height:6px}
-.kz-yr em{font-style:normal;text-align:right;color:var(--muted)}
+.kz-yr em{font-style:normal;text-align:right;color:var(--muted);white-space:nowrap}
 .kz-proj{margin:0;padding:11px 16px 13px;border-top:1px solid var(--line);font-size:13.5px}
 .kz-proj b{font-weight:600}
 .kz-proj small{display:block;font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;text-transform:uppercase;margin-bottom:2px}
@@ -252,6 +252,8 @@ button{cursor:pointer}
 .cal .mf-c{font-size:10px;font-weight:700;opacity:.75}
 .cal .mf-now{box-shadow:0 0 0 2px var(--fg)}
 .kz-allbtn{width:100%}
+.cal .kz-flash{box-shadow:0 0 0 3px var(--kz-ok);animation:kzFlash 1.2s ease-out 2}
+@keyframes kzFlash{0%{transform:scale(1.12)}100%{transform:none}}
 
 .kz-warn{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--makruh-soft);border:1px solid var(--makruh);border-radius:var(--r);padding:12px 14px;font-size:13.5px}
 .kz-warn b{display:block;font-weight:600}
@@ -419,12 +421,11 @@ button{cursor:pointer}
     </section>
     <section class="card">
       <div class="mf-calh"><b id="mfCalH"></b><small id="mfCalS"></small></div>
-      <div class="kz-nav"><div class="kz-step"><button type="button" id="mfPrev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="mfMonth" style="min-width:110px"></b><button type="button" id="mfNextM"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div></div>
+      <div class="kz-nav"><div class="kz-step"><button type="button" id="mfPrevY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="mfYear"></b><button type="button" id="mfNextY"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div><div class="kz-step"><button type="button" id="mfPrev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button><b id="mfMonth" style="min-width:96px"></b><button type="button" id="mfNextM"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button></div></div>
       <div class="cal" id="mfCal"></div>
       <div class="legend kz-legend">
         <span><i class="sw ok"></i><em id="mfLgOk" style="font-style:normal"></em></span>
-        <span><i class="sw pa"></i><em id="mfLgPa" style="font-style:normal"></em></span>
-        <span><i class="sw op"></i><em id="mfLgOp" style="font-style:normal"></em></span>
+                <span><i class="sw op"></i><em id="mfLgOp" style="font-style:normal"></em></span>
       </div>
     </section>
     <section class="card mf-sum">
@@ -1033,7 +1034,7 @@ function kzCleanLog(o){const out={};if(o&&typeof o==="object"&&!Array.isArray(o)
 function kzInitial(){const a=new Uint8Array(KZ_DAYS),last=kzIdx(2026,12,4);
   for(let i=0;i<=last;i++)a[i]=15;a[last+1]=KZ_BIT.dhuhr|KZ_BIT.asr;return a}
 
-let kz=null,kzLog={},kzState="ok"; // ok | nostore (saving fails) | broken (stored data unreadable, left untouched)
+let kz=null,kzLog={},kzState="ok",kzFlash=-1; // ok | nostore (saving fails) | broken (stored data unreadable, left untouched)
 function kzLoad(){
   const raw=lsGet(KZ_LS.days);
   if(raw==null){kz=kzInitial();kzState=lsSet(KZ_LS.days,kzEncode(kz))?"ok":"nostore"}
@@ -1128,7 +1129,7 @@ function kzRenderCal(){
   const dF=new Intl.DateTimeFormat(L.loc,{day:"numeric",month:"long",timeZone:"UTC"});
   for(let d=1;d<=n;d++){const i=kzIdx(kzY,kzM,d),v=kz[i],cnt=POPC[v],st=cnt===4?2:cnt>0?1:0;
     const dots=KZ_KEYS.map(k=>`<i${v&KZ_BIT[k]?' class="on"':""}></i>`).join("");
-    h+=`<button type="button" class="day s${st}" data-i="${i}" aria-label="${dF.format(new Date(Date.UTC(kzY,kzM-1,d)))}: ${K.dayOf(cnt)}"><span>${d}</span><span class="dots">${dots}</span></button>`}
+    h+=`<button type="button" class="day s${st}${i===kzFlash?" kz-flash":""}" data-i="${i}" aria-label="${dF.format(new Date(Date.UTC(kzY,kzM-1,d)))}: ${K.dayOf(cnt)}"><span>${d}</span><span class="dots">${dots}</span></button>`}
   $("kzCal").innerHTML=h;
 }
 
@@ -1205,8 +1206,12 @@ document.getElementById("kzNextY").onclick=()=>{if(kzY<KZ_LAST_Y){kzY++;kzRender
 document.getElementById("kzPrevM").onclick=()=>{if(kzM>1)kzM--;else if(kzY>KZ_FIRST_Y){kzM=12;kzY--}kzRenderCal()};
 document.getElementById("kzNextM").onclick=()=>{if(kzM<12)kzM++;else if(kzY<KZ_LAST_Y){kzM=1;kzY++}kzRenderCal()};
 document.getElementById("kzCal").onclick=e=>{const b=e.target.closest("button.day");if(b)kzOpenSheet(+b.dataset.i)};
-document.getElementById("kzToggles").onclick=e=>{const b=e.target.closest("button[data-k]");if(!b||kzOpenDay<0)return;kzSetDay(kzOpenDay,kz[kzOpenDay]^KZ_BIT[b.dataset.k])};
-document.getElementById("kzAllDay").onclick=()=>{if(kzOpenDay>=0)kzSetDay(kzOpenDay,15)};
+document.getElementById("kzToggles").onclick=e=>{const b=e.target.closest("button[data-k]");if(!b||kzOpenDay<0)return;
+  if(b.dataset.k==="maghrib"&&typeof MF_SLOTS!=="undefined"&&kzOpenDay>=MF_SLOTS[0]&&kzOpenDay<=MF_SLOTS[MF_SLOTS.length-1]){const i=kzOpenDay;mfSet(i,!mfHas(i));kzOpenDay=i;kzRenderSheet();return}
+  kzSetDay(kzOpenDay,kz[kzOpenDay]^KZ_BIT[b.dataset.k])};
+document.getElementById("kzAllDay").onclick=()=>{if(kzOpenDay<0)return;const i=kzOpenDay;
+  if(typeof MF_SLOTS!=="undefined"&&i>=MF_SLOTS[0]&&i<=MF_SLOTS[MF_SLOTS.length-1]&&!mfHas(i)){mfSet(i,true);kzOpenDay=i}
+  kzSetDay(i,15)};
 document.getElementById("kzShClose").onclick=kzCloseSheet;
 document.getElementById("kzSheetBg").onclick=kzCloseSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&kzOpenDay>=0)kzCloseSheet()});
@@ -1385,23 +1390,21 @@ const MFT={
  de:{tag:"FOKUS · MAGHRIB 2027 BIS 2031",of:n=>`von ${n}`,today:"Heute",todayOf:(a,b)=>`${a} von ${b}`,plus:"+1 Maghrib erledigt",
   next:d=>`Als Nächstes: ${d}`,allDone:"Alle Maghrib 2027 bis 2031 erledigt",undo:"Rückgängig",
   finH:"Alle Maghrib fertig",finD:d=>`ca. ${d}`,finSub:n=>`Bei 5 pro Tag · noch ${n} Gebete`,finNone:"Geschafft",
-  total:"Kaza gesamt",totalV:(a,b,p)=>`${a} von ${b} · ${p}`,calH:"Maghrib-Kalender",calSub:"Jeder Tag = dieses Datum in 2027 bis 2031",
-  dayOf:(a,b)=>`${a} von ${b} erledigt`,allYears:"Alle erledigt",lgOk:"alle erledigt",lgPa:"teilweise",lgOp:"offen",
+  total:"Kaza gesamt",totalV:(a,b,p)=>`${a} von ${b} · ${p}`,calH:"Maghrib-Kalender",calSub:"Grün = Maghrib nachgeholt · Tag antippen zum Ändern",
+  dayOf:(a,b)=>`${a} von ${b} erledigt`,allYears:"Alle erledigt",lgOk:"Maghrib erledigt",lgPa:"",lgOp:"offen",
   showAll:"Kalender aller vier Gebete anzeigen",hideAll:"Kalender aller vier Gebete ausblenden",prevM:"Vorheriger Monat",nextM:"Nächster Monat"},
  tr:{tag:"ODAK · AKŞAM 2027–2031",of:n=>`/ ${n}`,today:"Bugün",todayOf:(a,b)=>`${a} / ${b}`,plus:"+1 Akşam kılındı",
   next:d=>`Sıradaki: ${d}`,allDone:"2027–2031 akşam namazlarının hepsi tamam",undo:"Geri al",
   finH:"Tüm akşam namazları bitişi",finD:d=>`yakl. ${d}`,finSub:n=>`Günde 5 ile · kalan ${n} namaz`,finNone:"Tamamlandı",
-  total:"Toplam kaza",totalV:(a,b,p)=>`${a} / ${b} · ${p}`,calH:"Akşam takvimi",calSub:"Her gün = 2027–2031 yıllarında bu tarih",
-  dayOf:(a,b)=>`${a} / ${b} kılındı`,allYears:"Hepsi kılındı",lgOk:"hepsi tamam",lgPa:"kısmen",lgOp:"açık",
+  total:"Toplam kaza",totalV:(a,b,p)=>`${a} / ${b} · ${p}`,calH:"Akşam takvimi",calSub:"Yeşil = akşam kaza edildi · değiştirmek için güne dokun",
+  dayOf:(a,b)=>`${a} / ${b} kılındı`,allYears:"Hepsi kılındı",lgOk:"akşam kılındı",lgPa:"",lgOp:"açık",
   showAll:"Dört vaktin takvimini göster",hideAll:"Dört vaktin takvimini gizle",prevM:"Önceki ay",nextM:"Sonraki ay"}
 };
 // slot order: date by date (1 Jan, 2 Jan, ...), inside a date year by year
-const MF_SLOTS=[];const MF_BYMD={};
-for(let m=1;m<=12;m++)for(let d=1;d<=31;d++){const list=[];
-  for(const y of MF_Y){const t=new Date(Date.UTC(y,m-1,d));if(t.getUTCMonth()===m-1)list.push({y,i:kzIdx(y,m,d)})}
-  if(list.length){MF_BYMD[m+"-"+d]=list;list.forEach(s=>MF_SLOTS.push(s.i))}}
+const MF_SLOTS=[];
+for(let i=kzIdx(MF_Y[0],1,1);i<kzIdx(MF_Y[MF_Y.length-1]+1,1,1);i++)MF_SLOTS.push(i); // 1 Jan 2027 ... 31 Dec 2031, day by day
 const MF_TOTAL=MF_SLOTS.length; // 1826
-let mfLog={},mfUndo=[],mfM=1,mfOpenMD=null;
+let mfLog={},mfUndo=[],mfY=MF_Y[0],mfM=1,mfOpenMD=null;
 try{const o=JSON.parse(lsGet(MF_LS.log)||"{}");if(o&&typeof o==="object")for(const k in o)if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&Number.isFinite(o[k])&&o[k]>0)mfLog[k]=Math.round(o[k])}catch(e){}
 try{const u=JSON.parse(lsGet(MF_LS.undo)||"[]");if(Array.isArray(u))mfUndo=u.filter(n=>Number.isInteger(n)&&n>=0&&n<KZ_DAYS).slice(-50)}catch(e){}
 const mfHas=i=>!!(kz[i]&KZ_BIT.maghrib);
@@ -1412,10 +1415,10 @@ function mfSaveExtra(){lsSet(MF_LS.log,JSON.stringify(mfLog));lsSet(MF_LS.undo,J
 function mfSet(i,on){
   if(kzState==="broken"||mfHas(i)===on)return false;
   const key=isoDay(deviceToday());mfLog[key]=Math.max(0,(mfLog[key]||0)+(on?1:-1));if(!mfLog[key])delete mfLog[key];
-  mfSaveExtra();kzSetDay(i,on?kz[i]|KZ_BIT.maghrib:kz[i]&~KZ_BIT.maghrib);return true}
+  mfSaveExtra();const dd=kzDate(i);kzY=dd.y;kzM=dd.m;kzFlash=i;kzSetDay(i,on?kz[i]|KZ_BIT.maghrib:kz[i]&~KZ_BIT.maghrib);return true}
 function mfPlus(){const i=mfNextSlot();if(i<0)return;if(mfSet(i,true)){mfUndo.push(i);mfSaveExtra();mfJump();renderKaza()}}
 function mfUndoLast(){while(mfUndo.length){const i=mfUndo.pop();if(mfHas(i)){mfSet(i,false);break}}mfSaveExtra();mfJump();renderKaza()}
-function mfJump(){const i=mfNextSlot();if(i>=0)mfM=kzDate(i).m}
+function mfJump(){const i=mfNextSlot();if(i>=0){const d=kzDate(i);mfY=d.y;mfM=d.m}}
 function mfRender(){
   const L=T[lang],F=MFT[lang],$=id=>document.getElementById(id),nf=n=>kzN(n);
   const done=mfDone(),left=MF_TOTAL-done,today=mfToday();
@@ -1436,16 +1439,20 @@ function mfRender(){
   const c=kzCount(kz);$("mfTotH").textContent=F.total;$("mfTotV").textContent=F.totalV(nf(c.done),nf(c.total),kzPct(c.done,c.total,1));$("mfTotBar").style.width=(c.done/c.total*100)+"%";
   // calendar
   $("mfCalH").textContent=F.calH;$("mfCalS").textContent=F.calSub;
-  $("mfMonth").textContent=new Intl.DateTimeFormat(L.loc,{month:"long",timeZone:"UTC"}).format(new Date(Date.UTC(2028,mfM-1,15)));
+  $("mfYear").textContent=mfY;
+  $("mfMonth").textContent=new Intl.DateTimeFormat(L.loc,{month:"long",timeZone:"UTC"}).format(new Date(Date.UTC(mfY,mfM-1,15)));
   $("mfPrev").setAttribute("aria-label",F.prevM);$("mfNextM").setAttribute("aria-label",F.nextM);
-  $("mfLgOk").textContent=F.lgOk;$("mfLgPa").textContent=F.lgPa;$("mfLgOp").textContent=F.lgOp;
-  const dF=new Intl.DateTimeFormat(L.loc,{day:"numeric",month:"long",timeZone:"UTC"});
-  let h="";const n=new Date(Date.UTC(2028,mfM,0)).getUTCDate(),nextMD=ni<0?null:(d=>d.m+"-"+d.d)(kzDate(ni));
-  for(let d=1;d<=n;d++){const md=mfM+"-"+d,list=MF_BYMD[md],dn=list.filter(s=>mfHas(s.i)).length,st=dn===list.length?2:dn>0?1:0;
-    h+=`<button type="button" class="day s${st}${md===nextMD?" mf-now":""}" data-md="${md}" aria-label="${dF.format(new Date(Date.UTC(2028,mfM-1,d)))}: ${F.dayOf(dn,list.length)}"><span>${d}</span><span class="mf-c">${dn}/${list.length}</span></button>`}
+  $("mfPrevY").disabled=mfY<=MF_Y[0];$("mfNextY").disabled=mfY>=MF_Y[MF_Y.length-1];
+  $("mfPrev").disabled=mfY<=MF_Y[0]&&mfM===1;$("mfNextM").disabled=mfY>=MF_Y[MF_Y.length-1]&&mfM===12;
+  $("mfLgOk").textContent=F.lgOk;$("mfLgOp").textContent=F.lgOp;
+  const dF=new Intl.DateTimeFormat(L.loc,{day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}),wdF=new Intl.DateTimeFormat(L.loc,{weekday:"short",timeZone:"UTC"});
+  let h="";for(let k=0;k<7;k++)h+=`<div class="wd">${wdF.format(new Date(Date.UTC(2024,0,1+k))).replace(".","")}</div>`;
+  const lead=(new Date(Date.UTC(mfY,mfM-1,1)).getUTCDay()+6)%7,n=new Date(Date.UTC(mfY,mfM,0)).getUTCDate();
+  for(let k=0;k<lead;k++)h+="<div></div>";
+  for(let d=1;d<=n;d++){const i=kzIdx(mfY,mfM,d),on=mfHas(i);
+    h+=`<button type="button" class="day s${on?2:0}${i===ni?" mf-now":""}" data-i="${i}" aria-label="${dF.format(new Date(Date.UTC(mfY,mfM-1,d)))}: ${on?F.lgOk:F.lgOp}"><span>${d}</span><span class="mf-c">${on?"✓":""}</span></button>`}
   $("mfCal").innerHTML=h;
   $("kzAllBtn").textContent=$("kzAll").hidden?F.showAll:F.hideAll;
-  if(mfOpenMD)mfRenderSheet();
 }
 function mfRenderSheet(){
   const L=T[lang],F=MFT[lang],$=id=>document.getElementById(id),[m,d]=mfOpenMD.split("-").map(Number),list=MF_BYMD[mfOpenMD];
@@ -1459,11 +1466,13 @@ function mfOpenSheet(md){mfOpenMD=md;mfRenderSheet();document.getElementById("mf
 function mfCloseSheet(){mfOpenMD=null;document.getElementById("mfSheetBg").hidden=true;document.getElementById("mfSheet").hidden=true}
 document.getElementById("mfPlus").onclick=mfPlus;
 document.getElementById("mfUndo").onclick=mfUndoLast;
-document.getElementById("mfPrev").onclick=()=>{mfM=mfM===1?12:mfM-1;mfRender()};
-document.getElementById("mfNextM").onclick=()=>{mfM=mfM===12?1:mfM+1;mfRender()};
-document.getElementById("mfCal").onclick=e=>{const b=e.target.closest("button.day");if(b)mfOpenSheet(b.dataset.md)};
+document.getElementById("mfPrev").onclick=()=>{if(mfM>1)mfM--;else if(mfY>MF_Y[0]){mfM=12;mfY--}mfRender()};
+document.getElementById("mfPrevY").onclick=()=>{if(mfY>MF_Y[0]){mfY--;mfRender()}};
+document.getElementById("mfNextY").onclick=()=>{if(mfY<MF_Y[MF_Y.length-1]){mfY++;mfRender()}};
+document.getElementById("mfNextM").onclick=()=>{if(mfM<12)mfM++;else if(mfY<MF_Y[MF_Y.length-1]){mfM=1;mfY++}mfRender()};
+document.getElementById("mfCal").onclick=e=>{const b=e.target.closest("button.day");if(b)kzOpenSheet(+b.dataset.i)};
 document.getElementById("mfToggles").onclick=e=>{const b=e.target.closest("button[data-i]");if(!b)return;const i=+b.dataset.i;mfSet(i,!mfHas(i))};
-document.getElementById("mfAll").onclick=()=>{if(!mfOpenMD)return;MF_BYMD[mfOpenMD].forEach(s=>{if(!mfHas(s.i))mfSet(s.i,true)})};
+
 document.getElementById("mfShClose").onclick=mfCloseSheet;
 document.getElementById("mfSheetBg").onclick=mfCloseSheet;
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&mfOpenMD)mfCloseSheet()});
